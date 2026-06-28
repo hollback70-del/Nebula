@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Student Analytics Graph</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        
+        body {
+            /* കാടും പുല്ലുകളും നിറഞ്ഞ ത്രില്ലിംഗ് പശ്ചാത്തലം */
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.85)), 
+                        url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1200&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #00ff33;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .graph-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(0, 15, 0, 0.9);
+            border: 2px solid #00ff33;
+            padding: 30px;
+            box-shadow: 0 0 35px rgba(0, 255, 51, 0.3);
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
+        }
+
+        h1 { text-align: center; margin-bottom: 10px; font-size: 24px; letter-spacing: 3px; text-shadow: 0 0 10px #00ff33; }
+        p.subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 30px; }
+
+        .graph-body { display: flex; flex-direction: column; gap: 15px; }
+        .graph-row { display: flex; align-items: center; gap: 20px; }
+        
+        .student-info { width: 180px; font-size: 13px; color: #00ccff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .bar-container { flex: 1; background: rgba(255, 255, 255, 0.05); height: 24px; border: 1px solid #00ff33; position: relative; border-radius: 3px; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, #004411, #00ff33); width: 0%; transition: width 1.2s ease-in-out; box-shadow: 0 0 15px rgba(0, 255, 51, 0.6); }
+        
+        .score-badge { width: 90px; font-size: 13px; text-align: right; color: #ff00ea; font-weight: bold; }
+
+        .no-data { text-align: center; color: #666; font-size: 14px; padding: 40px 0; }
+        
+        .back-btn { margin-top: 30px; background: transparent; border: 1px solid #00ff33; color: #00ff33; padding: 10px 25px; cursor: pointer; font-weight: bold; letter-spacing: 1px; }
+        .back-btn:hover { background: #00ff33; color: #000; box-shadow: 0 0 15px #00ff33; }
+    </style>
+</head>
+<body>
+
+    <div class="graph-container">
+        <h1>[ STUDENT PERFORMANCE ANALYTICS ]</h1>
+        <p class="subtitle">മാർക്ക് കൂടിയ കുട്ടികളിൽ നിന്നും കുറഞ്ഞവരിലേക്ക് ക്രമീകരിച്ച തത്സമയ ഗ്രാഫ് സിസ്റ്റം</p>
+        
+        <div class="graph-body" id="mainGraph">
+            <div class="no-data">രജിസ്റ്റർ ചെയ്ത കുട്ടികളുടെ വിവരങ്ങൾ ലഭ്യമല്ല! പോർട്ടലിൽ കയറി പുതിയ അക്കൗണ്ട് ഉണ്ടാക്കൂ.</div>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">_ BACK TO DASHBOARD</button>
+
+    <script>
+        function generateLiveGraph() {
+            const graphMain = document.getElementById('mainGraph');
+            let studentList = [];
+
+            // ലോക്കൽ സ്റ്റോറേജിൽ നിന്ന് STID ഉള്ള കുട്ടികളുടെ വിവരങ്ങൾ എടുക്കുന്നു
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("STID-")) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        // 4 വിഷയങ്ങളിലെയും മാർക്കുകൾ കൂട്ടുന്നു
+                        const total = parseInt(data.mal) + parseInt(data.eng) + parseInt(data.mat) + parseInt(data.sci);
+                        studentList.push({ id: data.id, name: data.name, total: total });
+                    } catch (e) {}
+                }
+            }
+
+            // മാർക്ക് കൂടിയ കുട്ടികളിൽ നിന്നും കുറഞ്ഞവരിലേക്ക് സോർട്ട് ചെയ്യുന്നു (Descending Order)
+            studentList.sort((a, b) => b.total - a.total);
+
+            if (studentList.length > 0) {
+                graphMain.innerHTML = ""; // No data മെസ്സേജ് മാറ്റുന്നു
+                
+                studentList.forEach(student => {
+                    // ശതമാനം കണക്കാക്കുന്നു (പരമാവധി 400 മാർക്ക്)
+                    const percent = (student.total / 400) * 100;
+
+                    const row = document.createElement('div');
+                    row.className = 'graph-row';
+                    row.innerHTML = `
+                        <div class="student-info" title="${student.name} (${student.id})">${student.name}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${percent}%"></div>
+                        </div>
+                        <div class="score-badge">${student.total}/400</div>
+                    `;
+                    graphMain.appendChild(row);
+                });
+            }
+        }
+
+        // പേജ് തുറക്കുമ്പോൾ തന്നെ ഗ്രാഫ് കാണിക്കാൻ
+        window.addEventListener('DOMContentLoaded', generateLiveGraph);
+    </script>
+</body>
+</html>
