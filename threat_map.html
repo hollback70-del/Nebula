@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Global Node Map</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; }
+        body { background: #050505; color: #ff9900; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .window { width: 100%; max-width: 500px; background: #000; border: 1px solid #ff9900; padding: 25px; box-shadow: 0 0 15px rgba(255,153,0,0.1); border-radius: 4px; }
+        .node-line { border-bottom: 1px dashed #221500; padding: 10px 0; font-size: 13px; display: flex; justify-content: space-between; }
+        .status-good { color: #00ff33; font-weight: bold; }
+        .back-btn { margin-top: 20px; background: transparent; border: 1px solid #ff9900; color: #ff9900; padding: 8px 20px; cursor: pointer; }
+        .back-btn:hover { background: #ff9900; color: #000; }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <h2 style="text-align: center; font-size: 1.1rem; margin-bottom: 15px;">[ GLOBAL NODE SCANNER ]</h2>
+        <div id="nodeContainer"></div>
+    </div>
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">_ BACK</button>
+
+    <script>
+        const locations = ["NEW_YORK_NODE_01", "TOKYO_CORE_SERVER", "LONDON_UPLINK_HUB", "FRANKFURT_DATA_MAIN", "MUMBAI_GATEWAY_NODE", "SYDNEY_BACKUP_ARRAY"];
+        const container = document.getElementById('nodeContainer');
+
+        function updateNodes() {
+            container.innerHTML = "";
+            locations.forEach(loc => {
+                const isSecured = Math.random() > 0.15;
+                const div = document.createElement('div');
+                div.className = "node-line";
+                div.innerHTML = `<span>> Connecting: ${loc}...</span> <span class="${isSecured ? 'status-good' : ''}">${isSecured ? '[ SECURED ]' : '[ TESTING... ]'}</span>`;
+                container.appendChild(div);
+            });
+        }
+        updateNodes();
+        setInterval(updateNodes, 3000);
+    </script>
+</body>
+</html>
