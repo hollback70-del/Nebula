@@ -5,27 +5,195 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Main System</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
         body {
             background-color: #050505;
             color: #00ff33;
-            font-family: 'Courier New', monospace;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
+
         h1 {
             text-shadow: 0 0 10px #00ff33;
-            margin-bottom: 20px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 24px;
         }
-        p {
+
+        /* അപ്‌ലോഡ് സെക്ഷൻ സ്റ്റൈൽ */
+        .upload-section {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px dashed #00ff33;
+            padding: 25px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 15px rgba(0, 255, 51, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .upload-section h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #005511;
+            color: #fff;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #00ff33;
+        }
+
+        /* ഫയൽ സെലക്ട് ചെയ്യുന്ന ബട്ടൺ */
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #00ff33;
+            background: transparent;
+            color: #00ff33;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background: #00ff33;
+            color: #000;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background: #00ff33;
+            color: #000;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 255, 51, 0.3);
+        }
+
+        /* അപ്‌ലോഡ് ചെയ്തവ കാണിക്കുന്ന ഗാലറി */
+        .gallery-container {
+            width: 100%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .gallery-item {
+            background: #101010;
+            border: 1px solid #00ff33;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 255, 51, 0.05);
+        }
+
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid #005511;
+            margin-bottom: 10px;
+        }
+
+        .gallery-item h3 {
+            font-size: 14px;
             color: #ffffff;
+            word-wrap: break-word;
+            padding: 5px 0;
         }
     </style>
 </head>
 <body>
+
     <h1>WELCOME TO NEBULA MAIN SYSTEM</h1>
-    <p>നിങ്ങൾ വിജയകരമായി ലോഗിൻ ചെയ്തിരിക്കുന്നു. സിസ്റ്റം റെഡിയാണ്.</p>
+
+    <div class="upload-section">
+        <h3>[ INITIALIZE MEDIA UPLOAD ]</h3>
+        
+        <input type="text" id="customHeading" class="input-field" placeholder="ഇവിടെ നിങ്ങളുടെ ഹെഡിങ് ടൈപ്പ് ചെയ്യുക...">
+        
+        <label class="custom-file-upload">
+            <input type="file" id="mediaInput" accept="image/*, video/*">
+            SELECT IMAGE / VIDEO
+        </label>
+        
+        <button class="action-btn" onclick="addMediaItem()">INJECT INTO SYSTEM</button>
+    </div>
+
+    <div class="gallery-container" id="gallery">
+        </div>
+
+    <script>
+        function addMediaItem() {
+            const headingInput = document.getElementById('customHeading');
+            const mediaInput = document.getElementById('mediaInput');
+            const gallery = document.getElementById('gallery');
+
+            // ഫയൽ സെലക്ട് ചെയ്തിട്ടുണ്ടോ എന്ന് നോക്കുന്നു
+            if (mediaInput.files.length === 0) {
+                alert("ദയവായി ഒരു ചിത്രമോ വീഡിയോയോ തിരഞ്ഞെടുക്കുക!");
+                return;
+            }
+
+            const file = mediaInput.files[0];
+            const headingText = headingInput.value.trim() || "No Title Provided";
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const mediaUrl = e.target.result;
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'gallery-item';
+
+                // ഫയൽ ഇമേജ് ആണോ വീഡിയോ ആണോ എന്ന് തിരിക്കുന്നു
+                if (file.type.startsWith('image/')) {
+                    itemDiv.innerHTML = `<img src="${mediaUrl}" alt="Uploaded Image">`;
+                } else if (file.type.startsWith('video/')) {
+                    itemDiv.innerHTML = `<video src="${mediaUrl}" controls></video>`;
+                }
+
+                // നിങ്ങൾ ടൈപ്പ് ചെയ്ത <h3> ഹെഡിങ് താഴെ ചേർക്കുന്നു
+                const h3 = document.createElement('h3');
+                h3.innerText = headingText;
+                itemDiv.appendChild(h3);
+
+                // ഗാലറിയിലേക്ക് പുതിയ ഐറ്റം ചേർക്കുന്നു
+                gallery.appendChild(itemDiv);
+
+                // ഇൻപുട്ട് ഫീൽഡുകൾ ക്ലിയർ ചെയ്യുന്നു
+                headingInput.value = '';
+                mediaInput.value = '';
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>
