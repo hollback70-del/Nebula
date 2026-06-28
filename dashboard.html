@@ -20,16 +20,18 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 20px 40px 20px; /* മുകളിൽ ബട്ടൺ വന്നതുകൊണ്ട് പാഡിങ് അഡ്ജസ്റ്റ് ചെയ്തു */
-            user-select: none; /* സീക്രട്ട് ടാപ്പിംഗ് എളുപ്പമാക്കാൻ */
+            padding: 20px 20px 40px 20px;
+            user-select: none;
         }
 
-        /* --- പുതിയ ടെർമിനൽ ബട്ടൺ മുകളിൽ സെറ്റ് ചെയ്യാനുള്ള സ്റ്റൈൽ --- */
+        /* മുകളിലെ ബട്ടണുകൾ ഒന്നിച്ച് വെക്കാനുള്ള പുതിയ കണ്ടെയ്നർ */
         .top-nav {
             width: 100%;
             display: flex;
             justify-content: center;
+            gap: 15px; /* രണ്ട് ബട്ടണുകൾ തമ്മിലുള്ള അകലം */
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .terminal-btn {
@@ -49,6 +51,19 @@
             background: #00ff33;
             color: #000;
             box-shadow: 0 0 20px #00ff33;
+        }
+
+        /* റൂട്ട് ടെർമിനൽ ബട്ടണിന് മാത്രമായി റെഡ് ഡിസൈൻ */
+        .root-btn {
+            border-color: #ff0000;
+            color: #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .root-btn:hover {
+            background: #ff0000;
+            color: #000;
+            box-shadow: 0 0 20px #ff0000;
         }
 
         .main-content {
@@ -71,13 +86,11 @@
             font-size: 14px;
         }
 
-        /* ബട്ടണുകൾ ഒന്നിച്ച് വെക്കാനുള്ള കണ്ടെയ്നർ */
         .bottom-nav {
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 20px; /* രണ്ട് ബട്ടണുകൾ തമ്മിലുള്ള അകലം */
-            padding-bottom: 20px;
+            gap: 20px;
             flex-wrap: wrap;
         }
 
@@ -102,7 +115,6 @@
             box-shadow: 0 0 15px #00ff33;
         }
 
-        /* ലോഗ് ബട്ടണിന് ചെറിയൊരു പ്രത്യേകത നൽകാൻ */
         .logs-btn {
             border-color: #00ff33;
             background: rgba(0, 255, 51, 0.05);
@@ -119,6 +131,7 @@
 
     <div class="top-nav">
         <button class="terminal-btn" onclick="window.location.href='terminal.html'">_ OPEN CORE TERMINAL</button>
+        <button class="terminal-btn root-btn" onclick="window.location.href='root_terminal.html'"># OPEN ROOT TERMINAL</button>
     </div>
 
     <div class="main-content">
@@ -145,7 +158,6 @@
     <script>
         let lastTap = 0;
         
-        // കമ്പ്യൂട്ടറിലെ ഡബിൾ ക്ലിക്ക് ചെക്ക് ചെയ്യാൻ
         document.body.addEventListener('click', function (e) {
             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a')) return;
 
@@ -158,7 +170,6 @@
             lastTap = now;
         });
 
-        // മൊബൈൽ സ്ക്രീനിലെ ഡബിൾ ടാപ്പ് ചെക്ക് ചെയ്യാൻ
         document.body.addEventListener('touchend', function (e) {
             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a')) return;
             
