@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Cyber Shield</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; }
+        body { background: #050505; color: #00ffff; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .window { width: 100%; max-width: 400px; background: #000; border: 1px solid #00ffff; padding: 30px; text-align: center; box-shadow: 0 0 15px rgba(0,255,255,0.1); }
+        
+        .shield-icon {
+            width: 80px; height: 90px; background: transparent; border: 3px solid #00ffff;
+            margin: 20px auto; border-radius: 0 0 40px 40px; position: relative;
+            animation: pulse 2s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px #00ffff; transform: scale(1); }
+            100% { box-shadow: 0 0 20px #00ffff; transform: scale(1.03); }
+        }
+        
+        .back-btn { margin-top: 20px; background: transparent; border: 1px solid #00ffff; color: #00ffff; padding: 8px 20px; cursor: pointer; }
+        .back-btn:hover { background: #00ffff; color: #000; }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <h2>[ NEBULA CORE SHIELD ]</h2>
+        <div class="shield-icon"></div>
+        <div style="font-weight: bold; color: #00ff33; letter-spacing: 1px;">🛡️ DEFENSE SYSTEM: ACTIVE</div>
+        <p style="font-size: 11px; color: #666; margin-top: 10px;">FIREWALL BLOCKING 100% INTENDED THREATS</p>
+    </div>
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">_ BACK</button>
+</body>
+</html>
