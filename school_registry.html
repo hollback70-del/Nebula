@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - School & Teacher Registry</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        
+        body {
+            background-color: #050505;
+            color: #00ff33;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(0, 10, 0, 0.9);
+            border: 2px solid #00ccff;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 204, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        h1 { text-align: center; color: #00ccff; letter-spacing: 3px; margin-bottom: 10px; text-shadow: 0 0 10px #00ccff; }
+        p.desc { text-align: center; color: #888; font-size: 13px; margin-bottom: 30px; }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        select, button {
+            background: #000;
+            border: 1px solid #00ccff;
+            padding: 12px 20px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        select { flex: 1; cursor: pointer; color: #00ff33; font-weight: bold; }
+
+        button {
+            cursor: pointer;
+            color: #00ccff;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #00ccff; color: #000; box-shadow: 0 0 15px #00ccff; }
+
+        /* ഷീറ്റ് / ടേബിൾ സ്റ്റൈൽ */
+        .sheet-container { width: 100%; overflow-x: auto; margin-top: 20px; display: none; }
+        
+        .registry-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: rgba(0, 5, 0, 0.8);
+        }
+
+        .registry-table th, .registry-table td {
+            border: 1px solid #00ccff;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        .registry-table th { background: rgba(0, 204, 255, 0.1); color: #00ccff; font-weight: bold; letter-spacing: 1px; }
+        .registry-table tr:hover { background: rgba(0, 255, 51, 0.05); }
+
+        .subject-list { color: #ff00ea; font-size: 12px; line-height: 1.4; }
+        .class-list { color: #ffff00; font-size: 12px; }
+
+        .back-btn {
+            margin-top: 30px;
+            background: transparent;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 10px 25px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: #ff0000; color: #000; box-shadow: 0 0 15px #ff0000; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>[ INSTITUTION & FACULTY REGISTRY ]</h1>
+        <p class="desc">ഒന്നു മുതൽ ഡിഗ്രി വരെയുള്ള വിദ്യാലയങ്ങളിലെ അധ്യാപകരുടെയും വിഷയങ്ങളുടെയും വിവരങ്ങൾ അടങ്ങിയ ഷീറ്റ് സിസ്റ്റം</p>
+
+        <div class="search-box">
+            <select id="schoolSelect">
+                <option value="">-- ഒരു സ്ഥാപനം തിരഞ്ഞെടുക്കുക / SELECT INSTITUTION --</option>
+                <option value="school_1">GHS മോഡൽ ഹയർ സെക്കൻഡറി സ്കൂൾ</option>
+                <option value="school_2">സെന്റ് മേരീസ് ഹൈസ്കൂൾ</option>
+                <option value="school_3">സെൻട്രൽ പബ്ലിക് സ്കൂൾ</option>
+                <option value="college_1">നെബുല ആർട്സ് ആൻഡ് സയൻസ് കോളേജ് (DEGREE)</option>
+                <option value="college_2">ഗവൺമെന്റ് വിക്ടോറിയ കോളേജ് (DEGREE)</option>
+            </select>
+            <button onclick="fetchSchoolData()">FETCH SHEET</button>
+        </div>
+
+        <div class="sheet-container" id="sheetContainer">
+            <h3 id="sheetTitle" style="margin-bottom: 15px; color: #ffff00;"></h3>
+            <table class="registry-table">
+                <thead>
+                    <tr>
+                        <th>TEACHER ID</th>
+                        <th>NAME</th>
+                        <th>PHONE NUMBER</th>
+                        <th>TOTAL SUBJECTS (Min 12)</th>
+                        <th>ASSIGNED CLASSES</th>
+                    </tr>
+                </thead>
+                <tbody id="sheetBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">_ BACK TO DASHBOARD</button>
+
+    <script>
+        // ഡാറ്റാബേസ് സ്ക്രിപ്റ്റ് (ഏതൊരു വിവരവും യുണീക് ആണ്, ഒരു ടീച്ചർക്ക് 12 സബ്ജക്റ്റുകൾ വീതമുണ്ട്)
+        const registryDatabase = {
+            school_1: {
+                name: "GHS മോഡൽ ഹയർ സെക്കൻഡറി സ്കൂൾ",
+                teachers: [
+                    { id: "TCH-S1-401", name: "അനിൽ കുമാർ കെ.", phone: "+91 9447102030", subjects: ["Malayalam I", "Malayalam II", "Sanskrit", "Basic Hindi", "Advanced Hindi", "Arabic Lit", "Tamil Lit", "English Grammar", "Prose", "Poetry", "Functional English", "Drama"], classes: "Class 1 to 10" },
+                    { id: "TCH-S1-402", name: "ദീപ വത്സലൻ", phone: "+91 9846203040", subjects: ["Mathematics", "Algebra", "Geometry", "Trigonometry", "Statistics", "Basic Physics", "Chemistry", "Biology", "Social Science", "History", "Geography", "Civics"], classes: "Class 5 to 10" }
+                ]
+            },
+            school_2: {
+                name: "സെന്റ് മേരീസ് ഹൈസ്കൂൾ",
+                teachers: [
+                    { id: "TCH-S2-501", name: "മാത്യു ജോസഫ്", phone: "+91 9744332211", subjects: ["English Prose", "English Poetry", "Phonetics", "Creative Writing", "Communicative English", "World Literature", "IT Theory", "Practical IT", "Coding Foundations", "Web Design", "Scratch Programming", "Logic Gates"], classes: "Class 8 to 10" },
+                    { id: "TCH-S2-502", name: "സിസ്റ്റർ അന്ന റോസ്", phone: "+91 9562887711", subjects: ["Natural Science", "Botany", "Zoology", "Ecology", "Lab Practicals", "Physical Chemistry", "Organic Chemistry", "Mechanics", "Optics", "Thermodynamics", "Astronomy", "Geology"], classes: "Class 6 to 10" }
+                ]
+            },
+            school_3: {
+                name: "സെൻട്രൽ പബ്ലിക് സ്കൂൾ",
+                teachers: [
+                    { id: "TCH-S3-601", name: "രാജേഷ് എം. എൻ", phone: "+91 9946112233", subjects: ["Indian History", "World History", "Physical Geography", "Human Geography", "Economics", "Political Science", "Sociology", "Disaster Management", "Environmental Studies", "General Knowledge", "Moral Science", "Life Skills"], classes: "Class 1 to 7" }
+                ]
+            },
+            college_1: {
+                name: "നെബുല ആർട്സ് ആൻഡ് സയൻസ് കോളേജ് (DEGREE)",
+                teachers: [
+                    { id: "COL-C1-801", name: "Dr. രാധിക പി.", phone: "+91 9188445566", subjects: ["Microeconomics", "Macroeconomics", "Mathematical Economics", "Econometrics", "Development Economics", "Public Finance", "International Trade", "Kerala Economy", "Banking Theory", "Financial Markets", "Corporate Accounting", "Cost Accounting"], classes: "B.Com & BA Economics (UG)" },
+                    { id: "COL-C1-802", name: "Prof. ജെയിംസ് അലക്സ്", phone: "+91 9048119922", subjects: ["Data Structures", "Design of Algorithms", "Computer Networks", "Database Management", "Operating Systems", "Python Programming", "Java Core", "Advanced Web Tech", "Software Engineering", "Cyber Security", "Artificial Intelligence", "Cloud Computing"], classes: "B.Sc Computer Science & BCA" }
+                ]
+            },
+            college_2: {
+                name: "ഗവൺമെന്റ് വിക്ടോറിയ കോളേജ് (DEGREE)",
+                teachers: [
+                    { id: "COL-C2-901", name: "Dr. കെ. സുരേഷ് ബാബു", phone: "+91 9495001122", subjects: ["Quantum Mechanics", "Statistical Mechanics", "Classical Dynamics", "Electrodynamics", "Nuclear Physics", "Solid State Physics", "Spectroscopy", "Mathematical Physics", "Digital Electronics", "Laser Physics", "Astrophysics", "Computational Physics"], classes: "B.Sc Physics (Degree)" }
+                ]
+            }
+        };
+
+        function fetchSchoolData() {
+            const select = document.getElementById('schoolSelect');
+            const schoolKey = select.value;
+            const container = document.getElementById('sheetContainer');
+            const body = document.getElementById('sheetBody');
+            const title = document.getElementById('sheetTitle');
+
+            if (!schoolKey) {
+                container.style.display = 'none';
+                alert("ദയവായി ഒരു സ്കൂൾ അല്ലെങ്കിൽ കോളേജ് തിരഞ്ഞെടുക്കുക!");
+                return;
+            }
+
+            const schoolData = registryDatabase[schoolKey];
+            title.innerText = `RECORDS FOR: ${schoolData.name}`;
+            body.innerHTML = "";
+
+            schoolData.teachers.forEach(teacher => {
+                // സബ്ജക്റ്റുകൾ ലിസ്റ്റ് ആയി കാണിക്കാൻ
+                let subjectsHTML = `<div class="subject-list">`;
+                teacher.subjects.forEach((sub, index) => {
+                    subjectsHTML += `${index + 1}. ${sub}<br>`;
+                });
+                subjectsHTML += `</div>`;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="color:#00ccff; font-weight:bold;">${teacher.id}</td>
+                    <td style="color:#fff; font-weight:bold;">${teacher.name}</td>
+                    <td>${teacher.phone}</td>
+                    <td>${subjectsHTML}</td>
+                    <td class="class-list">${teacher.classes}</td>
+                `;
+                body.appendChild(row);
+            });
+
+            container.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
