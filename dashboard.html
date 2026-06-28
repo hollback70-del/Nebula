@@ -18,9 +18,10 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
-            padding: 20px 20px 40px 20px;
+            padding: 40px 20px;
+            /* space-between മാറ്റി സാധാരണ സ്ക്രോളിംഗ് അനുവദിച്ചു */
+            overflow-y: auto; 
             user-select: none;
         }
 
@@ -31,7 +32,7 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 40px; /* താഴെയുള്ള കണ്ടന്റിലേക്ക് കുറച്ചുകൂടി ഗ്യാപ്പ് നൽകി */
         }
 
         .row-nav {
@@ -72,7 +73,6 @@
             box-shadow: 0 0 20px #ff0000;
         }
 
-        /* പുതിയ ഗ്ലോബൽ ചാറ്റ് ബട്ടൺ സ്റ്റൈൽ */
         .chat-btn {
             border-color: #00ccff;
             color: #00ccff;
@@ -89,8 +89,7 @@
 
         .main-content {
             text-align: center;
-            margin-top: auto;
-            margin-bottom: auto;
+            margin-bottom: 40px; /* താഴത്തെ ബട്ടണുകളിലേക്ക് കൃത്യമായ ഗ്യാപ്പ് നൽകി */
         }
 
         h1 {
@@ -113,6 +112,7 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
+            margin-bottom: 20px; /* ഇനിയും അടിയിൽ ബട്ടണുകൾ വരുമ്പോൾ ആവശ്യമായ സ്പേസ് */
         }
 
         .profile-link-btn {
@@ -177,7 +177,8 @@
             <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
             System Logs
         </a>
-    </div>
+        
+        </div>
 
     <script>
         let lastTap = 0;
