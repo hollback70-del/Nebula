@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Central Audit Control</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        body { background-color: #030303; color: #ff9900; min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* ലോഗിൻ ഗേറ്റ് */
+        .gate-container { width: 100%; max-width: 420px; background: #000; border: 1px solid #ff9900; padding: 30px; box-shadow: 0 0 20px rgba(255,153,0,0.1); border-radius: 4px; text-align: center; }
+        .gate-container h2 { font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 1px; }
+        .gate-container input { width: 100%; background: #0a0a0a; border: 1px solid #332200; padding: 12px; color: #fff; margin-bottom: 15px; outline: none; text-align: center; font-size: 16px; }
+        
+        /* ലോങ്ങ് പ്രസ്സ് ബട്ടൺ സെറ്റപ്പ് */
+        .hold-btn { background: #221100; border: 1px dashed #ff9900; color: #ff9900; padding: 12px; width: 100%; cursor: pointer; font-weight: bold; margin-bottom: 15px; user-select: none; -webkit-user-select: none; }
+        .hold-btn:active { background: #ff9900; color: #000; }
+        
+        .code-display { font-size: 11px; color: #888; margin-bottom: 15px; height: 15px; }
+        .submit-btn { background: #ff9900; color: #000; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; }
+
+        /* മെയിൻ ഓഡിറ്റ് ഡാഷ്‌ബോർഡ് */
+        .audit-dashboard { display: none; width: 100%; max-width: 1200px; background: #000; border: 2px solid #ff9900; padding: 25px; border-radius: 6px; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-top: 20px; }
+        
+        .site-status-list { background: #0a0705; border: 1px solid #221100; padding: 15px; height: 450px; overflow-y: auto; }
+        .site-card { background: #000; border: 1px solid #332200; padding: 12px; margin-bottom: 10px; font-size: 12px; }
+        .status-dot { inline-size: 10px; block-size: 10px; background: #00ff33; display: inline-block; border-radius: 50%; margin-right: 5px; }
+        
+        .live-activity-log { background: #050505; border: 1px solid #ff9900; padding: 15px; height: 450px; overflow-y: auto; font-size: 12px; color: #ccc; line-height: 1.6; }
+        .log-row { border-bottom: 1px solid #111; padding: 8px 0; }
+        
+        .back-btn { background: #111; color: #ff3333; border: 1px solid #ff3333; padding: 8px 15px; cursor: pointer; margin-top: 20px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="gate-container" id="authGate">
+        <h2>[ CENTRAL AUDIT AUTHENTICATION ]</h2>
+        <div class="code-display" id="otpHint">ബട്ടണിൽ അമർത്തിപ്പിടിച്ചാൽ കോഡ് കാണാം</div>
+        
+        <div class="hold-btn" id="holdButton" onmousedown="startHold()" onmouseup="endHold()" ontouchstart="startHold()" ontouchend="endHold()">
+            HOLD TO GENERATE VERIFICATION CODE
+        </div>
+
+        <input type="text" id="verificationInput" placeholder="Enter Dynamic Verification Code">
+        <button class="submit-btn" onclick="verifyGate()">ACCESS MONITOR</button>
+    </div>
+
+    <div class="audit-dashboard" id="auditMain">
+        <div style="text-align: center; border-bottom: 1px dashed #ff9900; padding-bottom: 15px;">
+            <h2>⚡ NEBULA CENTRAL AUDIT & ACTIVITY CONTROLLER ⚡</h2>
+            <p style="font-size: 11px; color: #666; margin-top: 5px;">REAL-TIME HOSTING METRICS & USER TRAFFIC INTRUSION LOGS</p>
+        </div>
+
+        <div class="grid-layout">
+            <div class="site-status-list">
+                <h3 style="font-size: 13px; margin-bottom: 15px; color: #fff;">🌐 TRACKED SITES (HOSTED METRICS)</h3>
+                <div id="sitesContainer"></div>
+            </div>
+
+            <div class="live-activity-log">
+                <h3 style="font-size: 13px; margin-bottom: 15px; color: #fff;">👥 LIVE USER ACTIVITY STREAM</h3>
+                <div id="activityLogs">
+                    <p style="color:#666;">> Initializing audit stream sockets... Connected.</p>
+                </div>
+            </div>
+        </div>
+
+        <center><button class="back-btn" onclick="window.location.reload()">_ LOCK MONITOR</button></center>
+    </div>
+
+    <script>
+        let currentSecureCode = "";
+        let holdTimer;
+
+        // ഓരോ 10 സെക്കന്റിലും പുതിയ കോഡ് നിർമ്മിക്കുന്നു
+        function generateNewCode() {
+            currentSecureCode = Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        generateNewCode();
+        setInterval(generateNewCode, 10000); // 10 സെക്കന്റിൽ കോഡ് മാറും
+
+        // ലോങ്ങ് പ്രസ്സ് ലോജിക്
+        function startHold() {
+            holdTimer = setTimeout(() => {
+                document.getElementById('otpHint').innerText = "CODE: " + currentSecureCode;
+                document.getElementById('otpHint').style.color = "#00ff33";
+            }, 1000); // 1 സെക്കൻഡ് അമർത്തിപ്പിടിച്ചാൽ കോഡ് കാണിക്കും
+        }
+
+        function endHold() {
+            clearTimeout(holdTimer);
+            setTimeout(() => {
+                document.getElementById('otpHint').innerText = "ബട്ടണിൽ അമർത്തിപ്പിടിച്ചാൽ കോഡ് കാണാം";
+                document.getElementById('otpHint').style.color = "#888";
+            }, 2000); // വിട്ടുകഴിഞ്ഞാൽ 2 സെക്കന്റിൽ കോഡ് മറയും
+        }
+
+        // ലോഗിൻ പരിശോധന
+        function verifyGate() {
+            const input = document.getElementById('verificationInput').value.trim();
+            if(input === currentSecureCode && currentSecureCode !== "") {
+                document.getElementById('authGate').style.display = 'none';
+                document.body.style.justifyContent = 'flex-start';
+                document.getElementById('auditMain').style.display = 'block';
+                loadTrackedSites();
+                startLiveActivityStream();
+            } else {
+                alert("ACCESS DENIED: വെരിഫിക്കേഷൻ കോഡ് തെറ്റാണ് അല്ലെങ്കിൽ കാലാവധി കഴിഞ്ഞു!");
+            }
+        }
+
+        // നമ്മുടെ ലിസ്റ്റിലുള്ള വെബ്സൈറ്റുകളുടെ വിവരങ്ങൾ
+        const websites = [
+            { name: "dashboard.html", deployed: "2026-06-25 10:00 AM", status: "ACTIVE" },
+            { name: "admin_login.html", deployed: "2026-06-26 02:15 PM", status: "ACTIVE" },
+            { name: "satellite_control_center.html", deployed: "2026-06-28 04:30 PM", status: "ACTIVE" },
+            { name: "global_defense_grid.html", deployed: "2026-06-28 06:10 PM", status: "ACTIVE" },
+            { name: "security_datacenter.html", deployed: "2026-06-28 05:00 PM", status: "ACTIVE" }
+        ];
+
+        function loadTrackedSites() {
+            const container = document.getElementById('sitesContainer');
+            container.innerHTML = "";
+            websites.forEach(site => {
+                container.innerHTML += `
+                    <div class="site-card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <b style="color:#ff9900;">${site.name}</b>
+                            <span><span class="status-dot"></span>${site.status}</span>
+                        </div>
+                        <div style="color:#666; font-size:11px;">DEPLOYED: ${site.deployed}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // ഉപയോക്താക്കൾ കയറുന്നതും ചെയ്യുന്നതുമായ കാര്യങ്ങളുടെ തത്സമയ സിമുലേഷൻ
+        const mockActivities = [
+            { user: "User_Kali_44", action: "Accessed admin_login.html and verified password.", site: "admin_login.html" },
+            { user: "Anonymous_Node", action: "Triggered emergency alert on global_defense_grid.html", site: "global_defense_grid.html" },
+            { user: "Admin_Ajay", action: "Modified Satellite Altitude to 425km", site: "satellite_control_center.html" },
+            { user: "Guest_User_10", action: "Viewed System Logs via core dashboard link.", site: "dashboard.html" },
+            { user: "User_Kali_44", action: "Deactivated Core Power-Grid_05", site: "satellite_control_center.html" }
+        ];
+
+        function startLiveActivityStream() {
+            const logBox = document.getElementById('activityLogs');
+            setInterval(() => {
+                const rand = mockActivities[Math.floor(Math.random() * mockActivities.length)];
+                const time = new Date().toLocaleTimeString();
+                
+                const div = document.createElement('div');
+                div.className = "log-row";
+                div.innerHTML = `[${time}] [<span style="color:#00ffff;">${rand.site}</span>] - <b>${rand.user}</b>: <span style="color:#fff;">${rand.action}</span>`;
+                
+                logBox.insertBefore(div, logBox.firstChild); // പുതിയത് മുകളിൽ വരാൻ
+                if(logBox.childNodes.length > 25) logBox.removeChild(logBox.lastChild);
+            }, 3000); // ഓരോ 3 സെക്കന്റിലും പുതിയ ആക്റ്റിവിറ്റി അപ്ഡേറ്റ് ആകും
+        }
+    </script>
+</body>
+</html>
