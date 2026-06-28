@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Advanced Cyber Dashboard v2.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        body { background-color: #020205; color: #00ff33; padding: 25px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        
+        .super-chassis { width: 100%; max-width: 1300px; background: #000; border: 2px solid #00ff33; padding: 25px; box-shadow: 0 0 40px rgba(0,255,51,0.15); border-radius: 8px; }
+        .header-panel { text-align: center; border-bottom: 2px dashed #00ff33; padding-bottom: 15px; margin-bottom: 25px; position: relative; }
+        .version-tag { position: absolute; top: 0; right: 10px; background: #00ff33; color: #000; font-weight: bold; padding: 2px 8px; font-size: 11px; }
+
+        /* മെയിൻ ഗ്രിഡ് ലേഔട്ട് */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+        
+        /* പുതിയ വെബ്‌സൈറ്റുകൾ വരാൻ പോകുന്ന പ്രധാന കൺട്രോൾ ഏരിയ */
+        .app-hub { background: #040d04; border: 1px solid #113311; padding: 20px; border-radius: 4px; }
+        .hub-title { font-size: 15px; color: #fff; margin-bottom: 20px; border-left: 4px solid #00ffff; padding-left: 10px; }
+        
+        /* ലിങ്ക് ബട്ടണുകൾ വെയ്ക്കാനുള്ള ഗ്രിഡ് */
+        .btn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
+        .adv-btn { display: flex; flex-direction: column; justify-content: center; background: #000; border: 1px solid #00ff33; color: #00ff33; padding: 15px; text-decoration: none; font-weight: bold; font-size: 13px; text-align: center; transition: all 0.3s; box-shadow: inset 0 0 10px rgba(0,255,51,0.05); }
+        .adv-btn:hover { background: #00ff33; color: #000; box-shadow: 0 0 15px #00ff33; transform: translateY(-2px); }
+        .adv-btn span { font-size: 10px; color: #888; font-weight: normal; margin-top: 5px; }
+        .adv-btn:hover span { color: #222; }
+
+        /* വശത്തെ ലൈവ് സ്റ്റാറ്റസ് മോണിറ്റർ */
+        .side-monitor { background: #06060c; border: 1px solid #00ffff; padding: 20px; border-radius: 4px; color: #00ffff; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; border-bottom: 1px solid #112233; padding-bottom: 5px; }
+        
+        /* ലൈവ് ലോഡ് ബാർ ആനിമേഷൻ */
+        .load-bar-bg { width: 100%; background: #111; height: 8px; border-radius: 4px; margin-top: 5px; overflow: hidden; }
+        .load-bar-fill { height: 100%; background: #00ffff; width: 65%; animation: loadFlux 3s infinite alternate; }
+        @keyframes loadFlux { 0% { width: 55%; } 100% { width: 85%; } }
+
+        .terminal-log { background: #000; border: 1px solid #333; height: 150px; margin-top: 25px; padding: 12px; font-size: 11px; color: #aaa; overflow-y: auto; line-height: 1.6; }
+        .back-main-btn { margin-top: 25px; background: transparent; border: 1px solid #ff3333; color: #ff3333; padding: 10px 25px; cursor: pointer; font-weight: bold; display: block; margin-left: auto; margin-right: auto; }
+        .back-main-btn:hover { background: #ff3333; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div class="super-chassis">
+        <div class="header-panel">
+            <div class="version-tag">v2.0 ADVANCED</div>
+            <h2>[ NEBULA NEXT-GEN CYBER DEPLOYMENT COMMAND ]</h2>
+            <p style="font-size: 11px; color: #666; margin-top: 5px;">MAIN PLATFORM FOR FUTURE SECURITY MODULES & INTERFACES</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="app-hub">
+                <div class="hub-title">🚀 FUTURE CODES & PROJECT LINK CHANNELS</div>
+                <div class="btn-grid" id="futureGrid">
+                    
+                    <a href="central_audit_log.html" class="adv-btn">
+                        📊 Central Audit Controller
+                        <span>System logs & session manager</span>
+                    </a>
+
+                    <div class="adv-btn" style="border-style: dashed; opacity: 0.4; cursor: not-allowed;">
+                        [ AWAITING NEXT PROJECT ]
+                        <span>Slot reserved for new module</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="side-monitor">
+                <h3 style="font-size: 13px; color: #fff; margin-bottom: 15px; border-bottom: 1px solid #00ffff; padding-bottom: 5px;">📊 ENGINE METRICS</h3>
+                <div class="stat-row"><span>Core Grid Connectivity</span><span style="color:#00ff33;">SECURE</span></div>
+                <div class="stat-row"><span>Quantum Sync Protocol</span><span style="color:#00ff33;">ACTIVE</span></div>
+                <div class="stat-row">
+                    <div>System Processing Load</div>
+                    <div class="load-bar-bg"><div class="load-bar-fill"></div></div>
+                </div>
+                <div style="font-size: 11px; color: #666; margin-top: 20px; text-align: center;">* All future extensions will route through this core matrix.</div>
+            </div>
+        </div>
+
+        <div class="terminal-log" id="termLog">
+            > Core version 2.0 initialized successfully.<br>
+            > Main sockets listening for future web extensions... Status: READY.
+        </div>
+
+        <button class="back-main-btn" onclick="window.location.href='dashboard.html'">_ BACK TO DASHBOARD v1.0</button>
+    </div>
+
+    <script>
+        // ടെർമിനലിലേക്ക് ലൈവ് ആയി കോഡുകൾ അപ്ഡേറ്റ് ചെയ്യുന്ന സിമുലേഷൻ
+        const logs = [
+            "> Synchronization with main server cluster... OK",
+            "> Sandbox environment armed for new modules.",
+            "> Port 8080 secure and awaiting file deployment.",
+            "> Terminal shell listening for active admin keys."
+        ];
+        setInterval(() => {
+            const logBox = document.getElementById('termLog');
+            const randomLog = logs[Math.floor(Math.random() * logs.length)];
+            const time = new Date().toLocaleTimeString();
+            logBox.innerHTML += `<br>[${time}] ${randomLog}`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }, 5000);
+    </script>
+</body>
+</html>
