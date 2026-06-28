@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Root Core Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #020202;
+            color: #00ff33;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .terminal-box {
+            width: 100%;
+            max-width: 850px;
+            height: 550px;
+            background: #000000;
+            border: 2px solid #ff0000; /* റൂട്ട് ആയതുകൊണ്ട് റെഡ് ബോർഡർ */
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .terminal-header {
+            background: #0d0000;
+            border-bottom: 1px solid #ff0000;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .terminal-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .output-line {
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #ff0000;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .cmd-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00ff33;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* സസ്പെൻഡ് ചെയ്യുമ്പോൾ കാണിക്കുന്ന ലോക്ക് സ്ക്രീൻ */
+        .lock-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 0, 0, 0.95);
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .lock-overlay h2 {
+            color: #ff0000;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .unlock-input {
+            background: #000;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 10px;
+            margin-top: 15px;
+            text-align: center;
+            outline: none;
+            font-family: 'Courier New', monospace;
+        }
+
+        .unlock-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid #00ff33;
+            color: #00ff33;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .unlock-btn:hover { background: #00ff33; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-box">
+        <div class="lock-overlay" id="lockOverlay">
+            <h2>[ SYSTEM SUSPENDED: RULE VIOLATION ]</h2>
+            <p style="color: #aaa; font-size: 12px;">നിയമവിരുദ്ധമായ പ്രവർത്തനം കണ്ടെത്തിയതിനാൽ സിസ്റ്റം ലോക്ക് ചെയ്തിരിക്കുന്നു.</p>
+            <p style="color: #ff0000; font-size: 11px; margin-top: 10px;">* ലോക്ക് മാറ്റാൻ ഇവിടെ അമർത്തിപ്പിടിക്കുക (Long Press) *</p>
+            
+            <div id="secretCodeBox" style="display:none; color:#00ff33; margin-top:15px; font-weight:bold;">
+                BYPASS CODE: <span id="bypassCode" style="user-select:all;">BYPASS-70</span>
+            </div>
+
+            <input type="text" id="unlockCodeInput" class="unlock-input" placeholder="Enter Bypass Code">
+            <button class="unlock-btn" onclick="attemptUnlock()">APPLY BYPASS</button>
+        </div>
+
+        <div class="terminal-header">
+            <span style="color: #ff0000;">STRICT ROOT TERMINAL (AUTHORIZED ONLY)</span>
+            <button style="color:#ff0000; background:transparent; border:1px solid #ff0000; padding:2px 8px; cursor:pointer;" onclick="window.location.href='dashboard.html'">Exit</button>
+        </div>
+        
+        <div class="terminal-body" id="terminalBody">
+            <div class="output-line" style="color: #ff3333; font-weight: bold;">WARNING: ഈ ടെർമിനലിൽ കമാൻഡുകൾ കൗണ്ടർ ചെയ്യപ്പെടുന്നുണ്ട്. അനാവശ്യമായതോ നിയമവിരുദ്ധമായതോ ആയ പദങ്ങൾ ഉപയോഗിച്ചാൽ സിസ്റ്റം സസ്പെൻഡ് ചെയ്യപ്പെടും.</div>
+            <div class="output-line">Type "sudo apt update" or tool names (nmap, wireshark, metasploit, burpsuite, john, hydra, aircrack, sqlmap) to see core logs.</div>
+            
+            <div class="input-line">
+                <span class="prompt">root@nebula:~#</span>
+                <input type="text" id="cmdInput" class="cmd-input" autofocus autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cmdInput = document.getElementById('cmdInput');
+        const terminalBody = document.getElementById('terminalBody');
+        const lockOverlay = document.getElementById('lockOverlay');
+        const secretCodeBox = document.getElementById('secretCodeBox');
+        const bypassCodeSpan = document.getElementById('bypassCode');
+
+        // കമാൻഡ് വിവരങ്ങൾ
+        const toolLogs = {
+            'sudo apt update': 'Hit:1 http://kali.download/kali kali-rolling InRelease\nReading package lists... Done\nBuilding dependency tree... Done\nAll packages are up to date.',
+            'nmap': 'Nmap 7.94 status: Network Mapper simulated interface ready.\nTarget scan rule applied safely.',
+            'wireshark': 'Wireshark core packet logs: Interface wlan0 active.\nMonitoring network packets safely...',
+            'metasploit': 'Metasploit Framework v6.3.5-dev initialized.\nEnvironment test status: PASS',
+            'burpsuite': 'Burp Suite Community Edition v2026.1 active.\nProxy listener running on port 8080.',
+            'john': 'John the Ripper 1.9.0-jumbo-1\nRules status: Strict auditing policy enabled.',
+            'hydra': 'Hydra v9.5 active. Safe login audit mechanism loaded.',
+            'aircrack': 'Aircrack-ng 1.7 simulated environment: Monitor mode activated.',
+            'sqlmap': 'Sqlmap v1.7.5 active. Database structure integrity verified.'
+        };
+
+        // നിരോധിച്ച സുരക്ഷാ ലംഘന വാക്കുകൾ
+        const forbiddenWords = ['hack', 'destroy', 'bypass', 'delete-all', 'kill', 'malware', 'exploit'];
+
+        cmdInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const fullCmd = cmdInput.value.trim();
+                const cmd = fullCmd.toLowerCase();
+                if (!fullCmd) return;
+
+                // യൂസർ കമാൻഡ് കാണിക്കുക
+                const inputLine = document.createElement('div');
+                inputLine.className = 'output-line';
+                inputLine.innerHTML = `<span style="color: #ff0000; font-weight: bold;">root@nebula:~#</span> ${fullCmd}`;
+                terminalBody.insertBefore(inputLine, cmdInput.parentElement);
+
+                // സുരക്ഷാ നിയമം ലംഘിച്ചോ എന്ന് നോക്കുന്നു
+                const ruleViolation = forbiddenWords.some(word => cmd.includes(word));
+
+                if (ruleViolation) {
+                    // സസ്പെൻഡ് മോഡ് ഓൺ ആക്കുന്നു
+                    lockOverlay.style.display = 'flex';
+                    // റെൻഡറിലേക്ക് റിപ്പോർട്ട് അയക്കുന്നു
+                    fetch('https://nebula-backend-3-rdiz.onrender.com/track_intrusion', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: "ROOT_SUSPENSION", details: `Forbidden command: ${fullCmd}` })
+                    });
+                    cmdInput.value = '';
+                    return;
+                }
+
+                const responseLine = document.createElement('div');
+                responseLine.className = 'output-line';
+
+                if (cmd === 'clear') {
+                    const lines = terminalBody.querySelectorAll('.output-line');
+                    lines.forEach(line => line.remove());
+                } else if (toolLogs[cmd]) {
+                    responseLine.innerText = toolLogs[cmd];
+                    terminalBody.insertBefore(responseLine, cmdInput.parentElement);
+                } else {
+                    responseLine.innerHTML = `<span style="color:#ff0000;">Command restricted under root policy or invalid.</span>`;
+                    terminalBody.insertBefore(responseLine, cmdInput.parentElement);
+                }
+
+                cmdInput.value = '';
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+            }
+        });
+
+        // --- ലോങ്ങ് പ്രസ്സ് വെരിഫിക്കേഷൻ സിസ്റ്റം ---
+        let pressTimer;
+        lockOverlay.addEventListener('mousedown', startPress);
+        lockOverlay.addEventListener('mouseup', endPress);
+        lockOverlay.addEventListener('touchstart', startPress);
+        lockOverlay.addEventListener('touchend', endPress);
+
+        function startPress() {
+            pressTimer = window.setTimeout(function() {
+                const randomNum = Math.floor(1000 + Math.random() * 9000);
+                bypassCodeSpan.innerText = "RECOVER-" + randomNum;
+                secretCodeBox.style.display = 'block';
+            }, 1500); // 1.5 സെക്കൻഡ് പ്രസ്സ് ചെയ്യണം
+        }
+        function endPress() { clearTimeout(pressTimer); }
+
+        function attemptUnlock() {
+            const codeInput = document.getElementById('unlockCodeInput').value.trim();
+            const actualCode = bypassCodeSpan.innerText;
+
+            if (codeInput === actualCode && actualCode !== "") {
+                lockOverlay.style.display = 'none';
+                secretCodeBox.style.display = 'none';
+                document.getElementById('unlockCodeInput').value = '';
+                alert("SYSTEM RECOVERED: Terminal access restored.");
+                cmdInput.focus();
+            } else {
+                alert("INVALID CODE: Security lock remains.");
+            }
+        }
+
+        document.querySelector('.terminal-box').addEventListener('click', () => { cmdInput.focus(); });
+    </script>
+</body>
+</html>
