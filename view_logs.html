@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Log Decoder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #050505;
+            color: #00ff33;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .decoder-box {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #00ff33;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 51, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #00ff33;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: #000;
+            border: 1px solid #005511;
+            color: #00ff33;
+            padding: 12px;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            border-color: #00ff33;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #00ff33;
+            color: #00ff33;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background: #00ff33;
+            color: #000;
+        }
+
+        .result-box {
+            background: #000;
+            border: 1px dashed #ff3333;
+            padding: 15px;
+            min-height: 60px;
+            font-size: 14px;
+            color: #ffffff;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #008822;
+            margin-bottom: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decoder-box">
+        <h2>[ NEBULA LOG DECODER ]</h2>
+        
+        <span class="label">> PASTE BINARY CODES HERE:</span>
+        <textarea id="binaryInput" placeholder="ഡാറ്റാബേസിലെ secured_log-ൽ ഉള്ള 010101 കോഡ് ഇവിടെ പേസ്റ്റ് ചെയ്യുക..."></textarea>
+        
+        <button onclick="decodeBinary()">DECRYPT LOG</button>
+        
+        <span class="label">> DECRYPTED DATA:</span>
+        <div id="outputResult" class="result-box">No data decrypted yet.</div>
+    </div>
+
+    <script>
+        function decodeBinary() {
+            const binaryString = document.getElementById('binaryInput').value.trim();
+            const outputDiv = document.getElementById('outputResult');
+            
+            if (!binaryString) {
+                outputDiv.innerText = "Error: Please paste some binary data first!";
+                outputDiv.style.color = "#ff3333";
+                return;
+            }
+
+            try {
+                // സ്പേസ് വെച്ച് ബൈനറി അക്കങ്ങളെ വേർതിരിക്കുന്നു
+                const binaryArray = binaryString.split(' ');
+                let decryptedText = '';
+
+                for (let i = 0; i < binaryArray.length; i++) {
+                    if (binaryArray[i].trim() !== '') {
+                        // ബൈനറിയെ നോർമൽ അക്ഷരങ്ങളാക്കി മാറ്റുന്നു
+                        decryptedText += String.fromCharCode(parseInt(binaryArray[i], 2));
+                    }
+                }
+
+                outputDiv.innerText = decryptedText;
+                outputDiv.style.color = "#00ff33";
+            } catch (error) {
+                outputDiv.innerText = "Error: Invalid binary format!";
+                outputDiv.style.color = "#ff3333";
+            }
+        }
+    </script>
+</body>
+</html>
