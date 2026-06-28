@@ -75,19 +75,19 @@
         let currentSecureCode = "";
         let holdTimer;
 
-        // ഓരോ 10 സെക്കന്റിലും പുതിയ കോഡ് നിർമ്മിക്കുന്നു
+        // കോഡ് മാറാതിരിക്കാനുള്ള സമയം 2 മിനിറ്റ് (120000 ms) ആക്കി മാറ്റി
         function generateNewCode() {
             currentSecureCode = Math.floor(100000 + Math.random() * 900000).toString();
         }
         generateNewCode();
-        setInterval(generateNewCode, 10000); // 10 സെക്കന്റിൽ കോഡ് മാറും
+        setInterval(generateNewCode, 120000); // കൃത്യം 2 മിനിറ്റിൽ മാത്രമേ ഇനി കോഡ് മാറു!
 
         // ലോങ്ങ് പ്രസ്സ് ലോജിക്
         function startHold() {
             holdTimer = setTimeout(() => {
                 document.getElementById('otpHint').innerText = "CODE: " + currentSecureCode;
                 document.getElementById('otpHint').style.color = "#00ff33";
-            }, 1000); // 1 സെക്കൻഡ് അമർത്തിപ്പിടിച്ചാൽ കോഡ് കാണിക്കും
+            }, 1000); 
         }
 
         function endHold() {
@@ -95,7 +95,7 @@
             setTimeout(() => {
                 document.getElementById('otpHint').innerText = "ബട്ടണിൽ അമർത്തിപ്പിടിച്ചാൽ കോഡ് കാണാം";
                 document.getElementById('otpHint').style.color = "#888";
-            }, 2000); // വിട്ടുകഴിഞ്ഞാൽ 2 സെക്കന്റിൽ കോഡ് മറയും
+            }, 3000); // കാണിച്ച കോഡ് 3 സെക്കന്റ് കഴിഞ്ഞേ സ്ക്രീനിൽ നിന്ന് മാഞ്ഞുപോകു
         }
 
         // ലോഗിൻ പരിശോധന
@@ -112,7 +112,6 @@
             }
         }
 
-        // നമ്മുടെ ലിസ്റ്റിലുള്ള വെബ്സൈറ്റുകളുടെ വിവരങ്ങൾ
         const websites = [
             { name: "dashboard.html", deployed: "2026-06-25 10:00 AM", status: "ACTIVE" },
             { name: "admin_login.html", deployed: "2026-06-26 02:15 PM", status: "ACTIVE" },
@@ -137,7 +136,6 @@
             });
         }
 
-        // ഉപയോക്താക്കൾ കയറുന്നതും ചെയ്യുന്നതുമായ കാര്യങ്ങളുടെ തത്സമയ സിമുലേഷൻ
         const mockActivities = [
             { user: "User_Kali_44", action: "Accessed admin_login.html and verified password.", site: "admin_login.html" },
             { user: "Anonymous_Node", action: "Triggered emergency alert on global_defense_grid.html", site: "global_defense_grid.html" },
@@ -156,9 +154,9 @@
                 div.className = "log-row";
                 div.innerHTML = `[${time}] [<span style="color:#00ffff;">${rand.site}</span>] - <b>${rand.user}</b>: <span style="color:#fff;">${rand.action}</span>`;
                 
-                logBox.insertBefore(div, logBox.firstChild); // പുതിയത് മുകളിൽ വരാൻ
+                logBox.insertBefore(div, logBox.firstChild); 
                 if(logBox.childNodes.length > 25) logBox.removeChild(logBox.lastChild);
-            }, 3000); // ഓരോ 3 സെക്കന്റിലും പുതിയ ആക്റ്റിവിറ്റി അപ്ഡേറ്റ് ആകും
+            }, 3000); 
         }
     </script>
 </body>
