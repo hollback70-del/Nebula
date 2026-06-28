@@ -21,6 +21,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 40px 20px;
+            user-select: none; /* സീക്രട്ട് ടാപ്പിംഗ് എളുപ്പമാക്കാൻ */
         }
 
         .main-content {
@@ -97,5 +98,34 @@
         </a>
     </div>
 
+    <script>
+        let lastTap = 0;
+        
+        // കമ്പ്യൂട്ടറിലെ ഡബിൾ ക്ലിക്ക് ചെക്ക് ചെയ്യാൻ
+        document.body.addEventListener('click', function (e) {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a')) return;
+
+            const now = new Date().getTime();
+            const timesince = now - lastTap;
+            
+            if ((timesince < 300) && (timesince > 0)) {
+                window.location.href = "kali_info.html";
+            }
+            lastTap = now;
+        });
+
+        // മൊബൈൽ സ്ക്രീനിലെ ഡബിൾ ടാപ്പ് ചെക്ക് ചെയ്യാൻ
+        document.body.addEventListener('touchend', function (e) {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a')) return;
+            
+            const now = new Date().getTime();
+            const timesince = now - lastTap;
+            
+            if ((timesince < 300) && (timesince > 0)) {
+                window.location.href = "kali_info.html";
+            }
+            lastTap = now;
+        });
+    </script>
 </body>
 </html>
