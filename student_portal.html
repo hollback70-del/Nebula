@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Student Registry & Certificate Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), 
+                        url('https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=1200&auto=format&fit=crop'); /* റിയൽ റോസാപ്പൂക്കളുടെ ബാക്ക്ഗ്രൗണ്ട് */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ff00ea;
+            min-height: 100vh;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container { width: 100%; max-width: 800px; background: rgba(0, 0, 0, 0.9); border: 2px solid #ff00ea; padding: 30px; box-shadow: 0 0 30px rgba(255, 0, 234, 0.3); border-radius: 10px; margin-bottom: 30px; }
+        h1, h2, h3 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; text-shadow: 0 0 10px #ff00ea; }
+        p { color: #aaa; text-align: center; margin-bottom: 20px; font-size: 13px; }
+
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .tab-btn { background: transparent; border: 1px solid #ff00ea; color: #ff00ea; padding: 10px 20px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .tab-btn.active, .tab-btn:hover { background: #ff00ea; color: #000; box-shadow: 0 0 15px #ff00ea; }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; margin-bottom: 5px; color: #ff00ea; font-weight: bold; }
+        input, select, textarea { width: 100%; background: #0a0a0a; border: 1px solid #ff00ea; padding: 10px; color: #fff; outline: none; font-size: 14px; }
+        input:focus { box-shadow: 0 0 10px rgba(255, 0, 234, 0.5); }
+
+        .submit-btn { width: 100%; padding: 12px; background: transparent; border: 2px solid #00ff33; color: #00ff33; font-weight: bold; cursor: pointer; margin-top: 10px; letter-spacing: 2px; }
+        .submit-btn:hover { background: #00ff33; color: #000; box-shadow: 0 0 15px #00ff33; }
+
+        /* വെരിഫിക്കേഷൻ ഓവർലേ */
+        .verify-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,0,5,0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
+        
+        /* SSLC / TC മോഡൽ സർട്ടിഫിക്കറ്റ് ഷീറ്റ് */
+        .certificate-sheet { display: none; width: 100%; max-width: 750px; background: #fffdf2; color: #000; border: 6px double #4a3319; padding: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.5); margin-top: 30px; position: relative; }
+        .cert-header { text-align: center; border-bottom: 2px dashed #4a3319; padding-bottom: 15px; margin-bottom: 20px; }
+        .cert-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .cert-table th, .cert-table td { border: 1px solid #4a3319; padding: 10px; text-align: left; font-size: 13px; }
+        .cert-table th { background: #eae4cb; }
+    </style>
+</head>
+<body>
+
+    <div class="verify-overlay" id="verifyOverlay">
+        <h2 style="color: #ff00ea;">[ SECURITY VERIFICATION REQUIRED ]</h2>
+        <p style="color: #666;">തുടരാൻ ഇവിടെ ലോങ്ങ് പ്രസ്സ് (അമർത്തിപ്പിടിക്കുക) ചെയ്യുക</p>
+        
+        <div id="step1Box" style="display:none; color:#00ff33; margin: 15px 0; font-weight:bold;">
+            STAGE 1 CODE: <span id="code1">NEBULA-X</span>
+        </div>
+        <input type="text" id="vInput1" placeholder="Enter Stage 1 Code" style="max-width:300px; text-align:center; margin-bottom:10px;">
+        
+        <div id="step2Box" style="display:none; color:#00ccff; margin: 15px 0; font-weight:bold;">
+            STAGE 2 CODE: <span id="code2">SECURE-Y</span>
+        </div>
+        <input type="text" id="vInput2" placeholder="Enter Stage 2 Code" style="max-width:300px; text-align:center; display:none; margin-bottom:20px;">
+        
+        <button class="submit-btn" style="max-width:200px;" onclick="checkVerification()">VERIFY NOW</button>
+    </div>
+
+    <div class="container">
+        <h1>NEBULA STUDENT REGISTRY</h1>
+        <p>പൂക്കളുടെ പശ്ചാത്തലത്തിലുള്ള അതീവ സുരക്ഷിത അക്കാദമിക് പോർട്ടൽ</p>
+
+        <div class="btn-group">
+            <button class="tab-btn active" onclick="switchTab('search')">SEARCH REPORT</button>
+            <button class="tab-btn" onclick="switchTab('login')">STUDENT LOGIN</button>
+            <button class="tab-btn" onclick="switchTab('register')">NEW REGISTRATION</button>
+        </div>
+
+        <div id="searchTab" class="form-section active">
+            <h2>MARKLIST / TC SEARCH ENGINE</h2>
+            <div class="input-group" style="display:flex; gap:10px; margin-top:20px;">
+                <input type="text" id="searchKey" placeholder="Enter Student ID or Full Name...">
+                <button class="tab-btn" style="white-space:nowrap;" onclick="searchStudent()">FETCH RECORDS</button>
+            </div>
+        </div>
+
+        <div id="loginTab" class="form-section">
+            <h2>STUDENT SECURE LOGIN</h2>
+            <div class="input-group">
+                <label>STUDENT ID / USERNAME:</label>
+                <input type="text" id="loginUser">
+            </div>
+            <div class="input-group">
+                <label>PASSWORD:</label>
+                <input type="password" id="loginPass">
+            </div>
+            <button class="submit-btn" onclick="triggerVerification('login')">PROCEED LOGIN</button>
+        </div>
+
+        <div id="registerTab" class="form-section">
+            <h2>AUTOMATIC TC & MARKLIST GENERATOR</h2>
+            <div class="grid-2">
+                <div class="input-group"><label>FULL NAME (വലിയ അക്ഷരത്തിൽ):</label><input type="text" id="stName"></div>
+                <div class="input-group"><label>PASSWORD:</label><input type="password" id="stPass"></div>
+            </div>
+            <div class="grid-2">
+                <div class="input-group"><label>AGE / വയസ്സ്:</label><input type="number" id="stAge"></div>
+                <div class="input-group"><label>CLASS / എത്രാം ക്ലാസ്:</label><input type="text" id="stClass" placeholder="eg: SSLC, Plus Two"></div>
+            </div>
+            <div class="input-group"><label>SCHOOL NAME / സ്കൂളിന്റെ പേര്:</label><input type="text" id="stSchool"></div>
+            <div class="input-group"><label>EXTRA CURRICULAR PROGRAMS / കലാ-കായിക പരിപാടികൾ:</label><input type="text" id="stPrograms" placeholder="eg: Coding, Football, Arts"></div>
+            
+            <h3 style="font-size:16px; margin-top:10px;">SUBJECTS & MARKS OUT OF 100</h3>
+            <div class="grid-2">
+                <div class="input-group"><label>MALAYALAM:</label><input type="number" id="mMal" value="90"></div>
+                <div class="input-group"><label>ENGLISH:</label><input type="number" id="mEng" value="85"></div>
+            </div>
+            <div class="grid-2">
+                <div class="input-group"><label>MATHEMATICS:</label><input type="number" id="mMat" value="95"></div>
+                <div class="input-group"><label>SCIENCE:</label><input type="number" id="mSci" value="88"></div>
+            </div>
+            <button class="submit-btn" onclick="triggerVerification('register')">GENERATE ACADEMIC PROFILE</button>
+        </div>
+    </div>
+
+    <div class="certificate-sheet" id="certSheet">
+        <div class="cert-header">
+            <h1 style="color:#000; font-size:24px; text-shadow:none;">BOARD OF PUBLIC EXAMINATIONS, NEBULA</h1>
+            <h3 style="color:#555; font-size:14px; text-shadow:none; margin-top:5px;">SECONDARY SCHOOL LEAVING CERTIFICATE & TRANSFER RECORD</h3>
+        </div>
+        <p style="color:#000; text-align:left; font-size:14px; line-height:2;">
+            <b>STUDENT ID :</b> <span id="cId" style="color:blue; font-weight:bold;"></span><br>
+            <b>NAME OF STUDENT :</b> <span id="cName"></span><br>
+            <b>AGE :</b> <span id="cAge"></span> | <b>CLASS :</b> <span id="cClass"></span><br>
+            <b>INSTITUTION / SCHOOL :</b> <span id="cSchool"></span><br>
+            <b>ACTIVITIES & PROGRAMS :</b> <span id="cPrograms"></span>
+        </p>
+
+        <table class="cert-table">
+            <thead>
+                <tr>
+                    <th>SUBJECT CODE & NAME</th>
+                    <th>MAX MARKS</th>
+                    <th>MARKS OBTAINED</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>101 - MALAYALAM</td><td>100</td><td id="cMal"></td><td>PASSED</td></tr>
+                <tr><td>102 - ENGLISH</td><td>100</td><td id="cEng"></td><td>PASSED</td></tr>
+                <tr><td>103 - MATHEMATICS</td><td>100</td><td id="cMat"></td><td>PASSED</td></tr>
+                <tr><td>104 - SCIENCE</td><td>100</td><td id="cSci"></td><td>PASSED</td></tr>
+            </tbody>
+        </table>
+        <div style="margin-top:30px; text-align:right; font-size:12px;">
+            <p style="color:#000; text-align:right;"><b>Sd/-</b><br>CONTROLLER OF EXAMINATIONS</p>
+        </div>
+        <center><button class="tab-btn" style="margin-top:20px; border-color:#000; color:#000;" onclick="document.getElementById('certSheet').style.display='none'">CLOSE SHEET</button></center>
+    </div>
+
+    <script>
+        let currentAction = "";
+        let pressTimer;
+
+        function switchTab(tab) {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // --- വെരിഫിക്കേഷൻ സിസ്റ്റം (ലോങ്ങ് പ്രസ്സ്) ---
+        function triggerVerification(action) {
+            currentAction = action;
+            document.getElementById('verifyOverlay').style.display = 'flex';
+        }
+
+        const overlay = document.getElementById('verifyOverlay');
+        overlay.addEventListener('mousedown', startPress);
+        overlay.addEventListener('touchstart', startPress);
+        overlay.addEventListener('mouseup', endPress);
+        overlay.addEventListener('touchend', endPress);
+
+        function startPress() {
+            pressTimer = window.setTimeout(() => {
+                // സ്റ്റേജ് 1 കോഡ് കാണിക്കുന്നു
+                document.getElementById('code1').innerText = "NEBULA-7080";
+                document.getElementById('step1Box').style.display = 'block';
+                
+                // സ്റ്റേജ് 2 കോഡ് കാണിക്കുന്നു
+                document.getElementById('code2').innerText = "VERIFIED-2026";
+                document.getElementById('step2Box').style.display = 'block';
+                document.getElementById('vInput2').style.display = 'block';
+            }, 1500);
+        }
+        function endPress() { clearTimeout(pressTimer); }
+
+        function checkVerification() {
+            const v1 = document.getElementById('vInput1').value.trim();
+            const v2 = document.getElementById('vInput2').value.trim();
+
+            if(v1 === "NEBULA-7080" && v2 === "VERIFIED-2026") {
+                document.getElementById('verifyOverlay').style.display = 'none';
+                document.getElementById('vInput1').value = "";
+                document.getElementById('vInput2').value = "";
+                
+                if(currentAction === 'register') executeRegistration();
+                if(currentAction === 'login') executeLogin();
+            } else {
+                alert("SECURITY ERROR: Verification codes do not match!");
+            }
+        }
+
+        // --- രജിസ്ട്രേഷൻ ലോജിക് ---
+        function executeRegistration() {
+            const name = document.getElementById('stName').value.trim();
+            const pass = document.getElementById('stPass').value.trim();
+            const age = document.getElementById('stAge').value.trim();
+            const cl = document.getElementById('stClass').value.trim();
+            const school = document.getElementById('stSchool').value.trim();
+            const progs = document.getElementById('stPrograms').value.trim();
+
+            if(!name || !pass) { alert("Please enter Name and Password!"); return; }
+
+            const studentId = "STID-" + Math.floor(100000 + Math.random() * 900000);
+            const studentData = {
+                id: studentId, name: name, pass: pass, age: age, class: cl, school: school, programs: progs,
+                mal: document.getElementById('mMal').value,
+                eng: document.getElementById('mEng').value,
+                mat: document.getElementById('mMat').value,
+                sci: document.getElementById('mSci').value
+            };
+
+            // ഡാറ്റ ലോക്കൽ സ്റ്റോറേജിലേക്കും റെൻഡർ ലോഗുകളിലേക്കും ഒരേസമയം സേവ് ചെയ്യുന്നു
+            localStorage.setItem(studentId, JSON.stringify(studentData));
+            localStorage.setItem("user_id_" + name.toLowerCase(), studentId); // പേര് വെച്ച് ലോഗിൻ ചെയ്യാൻ
+
+            // സെക്യൂർ ബാക്ക് എൻഡ് സിങ്ക് റിപ്പോർട്ട്
+            fetch('https://nebula-backend-3-rdiz.onrender.com/track_intrusion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: "STUDENT_REGISTRATION", details: `ID: ${studentId} | Name: ${name} registered successfully.` })
+            });
+
+            alert(`REGISTRATION SUCCESS!\nYour Student ID is: ${studentId}\nലോഗിൻ ചെയ്യാൻ ഈ ഐഡി ഉപയോഗിക്കുക.`);
+            switchTab('login');
+        }
+
+        // --- ലോഗിൻ ലോജിക് ---
+        function executeLogin() {
+            const user = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value.trim();
+
+            let targetId = user;
+            if(!user.startsWith("stid-")) {
+                targetId = localStorage.getItem("user_id_" + user) || "";
+            }
+
+            const dataStr = localStorage.getItem(targetId);
+            if(dataStr) {
+                const data = JSON.parse(dataStr);
+                if(data.pass === pass) {
+                    showCertificate(data);
+                } else { alert("Wrong Password!"); }
+            } else { alert("Student Record not found!"); }
+        }
+
+        // --- സെർച്ച് എൻജിൻ ലോജിക് ---
+        function searchStudent() {
+            const key = document.getElementById('searchKey').value.trim().toLowerCase();
+            if(!key) return;
+
+            let targetId = key;
+            if(!key.startsWith("stid-")) {
+                targetId = localStorage.getItem("user_id_" + key) || "";
+            }
+
+            const dataStr = localStorage.getItem(targetId);
+            if(dataStr) {
+                showCertificate(JSON.parse(dataStr));
+            } else {
+                alert("No records found for the given Name or ID!");
+            }
+        }
+
+        function showCertificate(data) {
+            document.getElementById('cId').innerText = data.id;
+            document.getElementById('cName').innerText = data.name.toUpperCase();
+            document.getElementById('cAge').innerText = data.age;
+            document.getElementById('cClass').innerText = data.class;
+            document.getElementById('cSchool').innerText = data.school;
+            document.getElementById('cPrograms').innerText = data.programs;
+            document.getElementById('cMal').innerText = data.mal;
+            document.getElementById('cEng').innerText = data.eng;
+            document.getElementById('cMat').innerText = data.mat;
+            document.getElementById('cSci').innerText = data.sci;
+
+            document.getElementById('certSheet').style.display = 'block';
+            document.getElementById('certSheet').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
