@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Kali Linux Core</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #050505;
+            color: #00ff33;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        .scroll-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+            text-shadow: 0 0 15px #00ff33;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: #888;
+            margin-top: 10px;
+        }
+
+        /* സ്ക്രോൾ ചെയ്യുമ്പോൾ പൊന്തിവരുന്ന സെക്ഷനുകൾ */
+        .info-section {
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #00ff33;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0, 255, 51, 0.05);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
+        }
+
+        /* ആനിമേഷൻ ക്ലാസ് */
+        .info-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #00ff33;
+            padding-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .info-section p {
+            color: #a5cca5;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* ഗ്രാഫിക് ബോക്സ് */
+        .graphic-box {
+            height: 150px;
+            border: 1px solid #004411;
+            margin-top: 15px;
+            background: linear-gradient(45deg, #000, #091a09);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #00ff33;
+            letter-spacing: 2px;
+        }
+
+        .btn-return {
+            display: block;
+            width: 160px;
+            margin: 40px auto;
+            padding: 12px;
+            background: transparent;
+            border: 2px solid #00ff33;
+            color: #00ff33;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn-return:hover {
+            background: #00ff33;
+            color: #000;
+            box-shadow: 0 0 15px #00ff33;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container">
+        <header>
+            <h1>Kali Linux Core Facts</h1>
+            <p>[ SECURITY & AUDITING SYSTEM INTERFACE ]</p>
+        </header>
+
+        <div class="info-section">
+            <h2>01. എന്താണ് കാലി ലിനക്സ്?</h2>
+            <p>ഡെബിയൻ (Debian) അടിസ്ഥാനമാക്കി നിർമ്മിച്ച ഒരു ലിനക്സ് ഓപ്പറേറ്റിംഗ് സിസ്റ്റമാണ് കാലി ലിനക്സ്. ഡിജിറ്റൽ ഫോറൻസിക്സ്, പെനട്രേഷൻ ടെസ്റ്റിംഗ്, സെക്യൂരിറ്റി ഓഡിറ്റിംഗ് എന്നിവയ്ക്കായി ലോകമെമ്പാടുമുള്ള സുരക്ഷാ വിദഗ്ദ്ധർ ഉപയോഗിക്കുന്ന പ്രധാന സിസ്റ്റമാണിത്.</p>
+            <div class="graphic-box">[ OS CORE: DEBIAN BASED ]</div>
+        </div>
+
+        <div class="info-section">
+            <h2>02. പ്രധാന സവിശേഷതകൾ (Main Factors)</h2>
+            <p>600-ലധികം മുൻകൂട്ടി ഇൻസ്റ്റാൾ ചെയ്ത സെക്യൂരിറ്റി ടൂളുകളുമായാണ് ഇത് വരുന്നത്. ഇത് പൂർണ്ണമായും സൌജന്യവും ഓപ്പൺ സോഴ്സുമാണ്. സുരക്ഷാ ഗവേഷണങ്ങൾക്കായി ഇതിന്റെ കേർണൽ പ്രത്യേകം കസ്റ്റമൈസ് ചെയ്തിരിക്കുന്നു.</p>
+            <div class="graphic-box">[ 600+ AUDITING TOOLS PRE-INSTALLED ]</div>
+        </div>
+
+        <div class="info-section">
+            <h2>03. സുരക്ഷാ മാനദണ്ഡങ്ങൾ</h2>
+            <p>സിസ്റ്റം നെറ്റ്‌വർക്കുകളിൽ ഉണ്ടാകാൻ സാധ്യതയുള്ള സുരക്ഷാ പിഴവുകൾ മുൻകൂട്ടി കണ്ടെത്താനും അവ പരിഹരിക്കാനും ഈ പ്ലാറ്റ്‌ഫോം സഹായിക്കുന്നു. കോഡുകൾ സുരക്ഷിതമായി സൂക്ഷിക്കാനുള്ള അന്തരീക്ഷം ഇത് നൽകുന്നു.</p>
+            <div class="graphic-box">[ NETWORK SECURITY MONITOR ACTIVE ]</div>
+        </div>
+
+        <a href="dashboard.html" class="btn-return">Terminal Back</a>
+    </div>
+
+    <script>
+        // സ്ക്രോൾ ചെയ്യുമ്പോൾ ഘട്ടങ്ങളായി പൊന്തിവരാനുള്ള ആനിമേഷൻ സ്ക്രിപ്റ്റ്
+        const sections = document.querySelectorAll('.info-section');
+        
+        const checkScroll = () => {
+            const triggerBottom = window.innerHeight / 5 * 4;
+            
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                
+                if(sectionTop < triggerBottom) {
+                    section.addClassList ? section.classList.add('visible') : section.className += ' visible';
+                }
+            });
+        };
+
+        // ആദ്യം ലോഡ് ചെയ്യുമ്പോൾ കാണിക്കാൻ
+        window.addEventListener('scroll', checkScroll);
+        // തുടക്കത്തിൽ തന്നെ ആദ്യ സെക്ഷൻ കാണിക്കാൻ
+        setTimeout(checkScroll, 200);
+    </script>
+</body>
+</html>
