@@ -20,7 +20,6 @@
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            /* space-between മാറ്റി സാധാരണ സ്ക്രോളിംഗ് അനുവദിച്ചു */
             overflow-y: auto; 
             user-select: none;
         }
@@ -32,7 +31,7 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            margin-bottom: 40px; /* താഴെയുള്ള കണ്ടന്റിലേക്ക് കുറച്ചുകൂടി ഗ്യാപ്പ് നൽകി */
+            margin-bottom: 40px;
         }
 
         .row-nav {
@@ -89,7 +88,7 @@
 
         .main-content {
             text-align: center;
-            margin-bottom: 40px; /* താഴത്തെ ബട്ടണുകളിലേക്ക് കൃത്യമായ ഗ്യാപ്പ് നൽകി */
+            margin-bottom: 40px;
         }
 
         h1 {
@@ -112,7 +111,7 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 20px; /* ഇനിയും അടിയിൽ ബട്ടണുകൾ വരുമ്പോൾ ആവശ്യമായ സ്പേസ് */
+            margin-bottom: 20px;
         }
 
         .profile-link-btn {
@@ -181,6 +180,11 @@
         <a href="student_portal.html" class="profile-link-btn" style="border-color: #ff00ea; color: #ff00ea; background: rgba(255, 0, 234, 0.05);">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.47 11.42L12 15l6.53-3.58-6.53-3.56-6.53 3.56zM12 18c-3.31 0-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8h-2c0 3.31-2.69 6-6 6z"/></svg>
             Student Registry Portal
+        </a>
+
+        <a href="graph.html" class="profile-link-btn" style="border-color: #00ff33; color: #00ff33; background: rgba(0, 255, 51, 0.05);">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.5 5h3v14h-3zm5.5 8h3v6h-3zM2 21h19v2H2z"/></svg>
+            Visual Analytics Graph
         </a>
     </div>
 
