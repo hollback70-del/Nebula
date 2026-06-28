@@ -1,12 +1,10 @@
-<!DOCTYPE httml>
-<html lang ="ml">
+<!DOCTYPE html>
+<html lang="ml">
 <head>
-    <meta charset ="UTF -8">
-    <meta name ="viewport" conten ="width =device-with,initial-scale =1.0">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal Access - Secure Login</title>
     <style>
-        /* അടിസ്ഥാന ക്രമീകരണങ്ങൾ */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +22,6 @@
             color: #00ff33;
         }
 
-        /* പശ്ചാത്തലത്തിലെ ആനിമേഷൻ ലൈനുകൾ */
         .bg-lines {
             position: absolute;
             top: 0;
@@ -37,7 +34,6 @@
             z-index: 1;
         }
 
-        /* ലോഗിൻ ബോക്സ് */
         .login-container {
             position: relative;
             background: rgba(10, 10, 10, 0.9);
@@ -50,7 +46,6 @@
             animation: fadeIn 1.5s ease-in-out;
         }
 
-        /* ടൈറ്റിൽ ആനിമേഷൻ */
         h2 {
             text-align: center;
             margin-bottom: 30px;
@@ -59,7 +54,6 @@
             text-shadow: 0 0 8px rgba(0, 255, 51, 0.6);
         }
 
-        /* ഇൻപുട്ട് ഫീൽഡുകൾ */
         .input-group {
             position: relative;
             margin-bottom: 25px;
@@ -77,7 +71,6 @@
             transition: 0.3s;
         }
 
-        /* ഇൻപുട്ടിൽ ക്ലിക്ക് ചെയ്യുമ്പോൾ ഉള്ള ആനിമേഷൻ */
         .input-group input:focus {
             border-bottom-color: #00ff33;
             box-shadow: 0 1px 0 #00ff33;
@@ -100,7 +93,6 @@
             text-shadow: 0 0 5px rgba(0, 255, 51, 0.4);
         }
 
-        /* ബട്ടൺ */
         button {
             width: 100%;
             padding: 12px;
@@ -113,7 +105,6 @@
             letter-spacing: 1px;
             transition: 0.4s;
             text-transform: uppercase;
-            box-shadow: inset 0 0 0 0 rgba(0, 255, 51, 0.2);
         }
 
         button:hover {
@@ -122,7 +113,15 @@
             box-shadow: 0 0 15px #00ff33;
         }
 
-        /* ആനിമേഷനുകൾ */
+        #errorMessage {
+            color: #ff3333;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 15px;
+            min-height: 20px;
+            font-weight: bold;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -135,18 +134,66 @@
 
     <div class="login-container">
         <h2>SYSTEM ACCESS</h2>
-        <form onsubmit="event.preventDefault();">
+        <form id="secureLoginForm">
             <div class="input-group">
-                <input type="text" required>
+                <input type="text" id="username" required autocomplete="off">
                 <label>USERNAME</label>
             </div>
             <div class="input-group">
-                <input type="password" required>
+                <input type="password" id="accessCode" required autocomplete="off">
                 <label>ACCESS CODE</label>
             </div>
             <button type="submit">INITIALIZE</button>
+            <div id="errorMessage"></div>
         </form>
     </div>
 
+    <script>
+        // താല്കാലികമായി നമ്മൾ സെറ്റ് ചെയ്യുന്ന ലോഗിൻ വിവരങ്ങൾ
+        const VALID_USER = "admin";
+        const VALID_CODE = "nebula70";
+
+        let loginAttempts = 0;
+        const MAX_ATTEMPTS = 3; // 3 തവണ തെറ്റിയാൽ ബ്ലോക്ക് ചെയ്യും (Anti-Brute Force)
+
+        document.getElementById('secureLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const usernameInput = document.getElementById('username').value.trim();
+            const accessCodeInput = document.getElementById('accessCode').value.trim();
+            const errorDiv = document.getElementById('errorMessage');
+
+            // സെക്യൂരിറ്റി ചെക്ക്: ഇൻപുട്ടിൽ സ്പെഷ്യൽ ക്യാരക്ടറുകൾ വരുന്നുണ്ടോ എന്ന് നോക്കുന്നു (Anti-SQL Injection)
+            const securePattern = /^[a-zA-Z0-9_]+$/;
+            if (!securePattern.test(usernameInput) || !securePattern.test(accessCodeInput)) {
+                errorDiv.innerText = "MALICIOUS INPUT DETECTED! ACCESS DENIED.";
+                return;
+            }
+
+            if (loginAttempts >= MAX_ATTEMPTS) {
+                errorDiv.innerText = "SYSTEM LOCKED DUE TO TOO MANY ATTEMPTS.";
+                return;
+            }
+
+            // ലോഗിൻ പരിശോധന
+            if (usernameInput === VALID_USER && accessCodeInput === VALID_CODE) {
+                errorDiv.style.color = "#00ff33";
+                errorDiv.innerText = "ACCESS GRANTED. REDIRECTING...";
+                
+                // 1.5 സെക്കന്റിന് ശേഷം അടുത്ത പേജിലേക്ക് ഓട്ടോമാറ്റിക്കായി പോകും
+                setTimeout(function() {
+                    window.location.href = "dashboard.html";
+                }, 1500);
+            } else {
+                loginAttempts++;
+                const remaining = MAX_ATTEMPTS - loginAttempts;
+                if (remaining <= 0) {
+                    errorDiv.innerText = "SYSTEM LOCKED.";
+                } else {
+                    errorDiv.innerText = `INVALID CREDENTIALS. ${remaining} ATTEMPTS LEFT.`;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
