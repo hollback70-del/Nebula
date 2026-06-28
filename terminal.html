@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Secure Gate & Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #050505;
+            color: #00ff33;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        /* --- വെരിഫിക്കേഷൻ ഗേറ്റ് സ്റ്റൈൽ --- */
+        .gate-box {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ff3333; /* സുരക്ഷാ ഗേറ്റിന് ചുവപ്പ് ബോർഡർ */
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(255, 51, 51, 0.2);
+            text-align: center;
+        }
+
+        .gate-box h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            color: #ff3333;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #888;
+        }
+
+        .gate-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #ff3333;
+            padding: 10px;
+            color: #ff3333;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .gate-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #00ff33;
+            color: #00ff33;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .gate-btn:hover {
+            background: #00ff33;
+            color: #000;
+        }
+
+        /* ലോങ്ങ് പ്രസ്സ് ചെയ്യുമ്പോൾ വരാനുള്ള പോപ്പ് അപ്പ് */
+        .secret-popup {
+            display: none;
+            background: #111;
+            border: 1px dashed #00ff33;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .copy-hint {
+            font-size: 10px;
+            color: #888;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* --- മെയിൻ ടെർമിനൽ സ്റ്റൈൽ (തുടക്കത്തിൽ ഒളിപ്പിച്ചു വെച്ചിരിക്കുന്നു) --- */
+        .terminal-box {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            height: 500px;
+            background: #000000;
+            border: 2px solid #00ff33;
+            box-shadow: 0 0 20px rgba(0, 255, 51, 0.2);
+            flex-direction: column;
+            border-radius: 5px;
+        }
+
+        .terminal-header {
+            background: #0a0a0a;
+            border-bottom: 1px solid #00ff33;
+            padding: 10px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .terminal-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+
+        .output-line {
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #ff3333;
+            margin-right: 10px;
+        }
+
+        .cmd-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00ff33;
+            outline: none;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gate-box" id="gateBox">
+        <h2>[ CORE VERIFICATION GATE ]</h2>
+        <p style="font-size: 11px; color: #ff3333; margin-bottom: 15px;">* LONG PRESS ANYWHERE TO REVEAL SECRET CODE *</p>
+        
+        <div class="input-group">
+            <label>TERMINAL USER:</label>
+            <input type="text" id="gateUser" class="gate-input" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>GATE PASSCODE:</label>
+            <input type="password" id="gatePass" class="gate-input">
+        </div>
+        <div class="input-group">
+            <label>SECRET VERIFICATION CODE:</label>
+            <input type="text" id="gateSecret" class="gate-input" placeholder="Paste secret code here">
+        </div>
+
+        <button class="gate-btn" onclick="verifyAndUnlock()">AUTHENTICATE & ENTER</button>
+
+        <div class="secret-popup" id="secretPopup">
+            <span>SECRET TOKEN: <b id="generatedToken" style="color: #00ff33; user-select: all;">NB-99X70</b></span>
+            <span class="copy-hint">(Double click the token to select and copy it)</span>
+        </div>
+    </div>
+
+    <div class="terminal-box" id="terminalBox">
+        <div class="terminal-header">
+            <span>NEBULA MULTI-VERIFIED CORE TERMINAL</span>
+            <button style="color: #ff3333; background: transparent; border: 1px solid #ff3333; padding: 2px 8px; cursor: pointer;" onclick="window.location.href='dashboard.html'">Exit</button>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+            <div class="output-line">ACCESS GRANTED. AUTHORIZED SESSION INITIALIZED.</div>
+            <div class="output-line">Type "help" to view system modules.</div>
+            <div class="input-line">
+                <span class="prompt">kali@nebula:~$</span>
+                <input type="text" id="cmdInput" class="cmd-input" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ലോങ്ങ് പ്രസ്സ് (Long Press) ഫങ്ക്ഷൻ ---
+        let pressTimer;
+        const secretPopup = document.getElementById('secretPopup');
+        const tokenDisplay = document.getElementById('generatedToken');
+
+        // റാൻഡം രഹസ്യ വെരിഫിക്കേഷൻ കോഡ് ഉണ്ടാക്കാൻ
+        function generateRandomToken() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let result = "NB-";
+            for (let i = 0; i < 5; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // അമർത്തിപ്പിടിക്കുമ്പോൾ പ്രവർത്തിക്കാൻ
+        function startPress() {
+            pressTimer = window.setTimeout(function() {
+                const secretCode = generateRandomToken();
+                tokenDisplay.innerText = secretCode;
+                secretPopup.style.display = "block";
+            }, 1000); // 1 സെക്കന്റ് അമർത്തിപ്പിടിച്ചാൽ കോഡ് വരും
+        }
+
+        function endPress() {
+            clearTimeout(pressTimer);
+        }
+
+        // മൌസിനും ടച്ച് സ്ക്രീനുകൾക്കുമായി ലോങ്ങ് പ്രസ്സ് ലിസണറുകൾ
+        document.body.addEventListener('mousedown', startPress);
+        document.body.addEventListener('mouseup', endPress);
+        document.body.addEventListener('touchstart', startPress);
+        document.body.addEventListener('touchend', endPress);
+
+        // --- വെരിഫിക്കേഷൻ & ഡാറ്റാബേസ് കണക്ഷൻ ---
+        function verifyAndUnlock() {
+            const user = document.getElementById('gateUser').value.trim();
+            const pass = document.getElementById('gatePass').value.trim();
+            const secret = document.getElementById('gateSecret').value.trim();
+            const tokenExpected = tokenDisplay.innerText;
+
+            if (!user || !pass || !secret) {
+                alert("ACCESS DENIED: All fields required!");
+                return;
+            }
+
+            if (secret !== tokenExpected) {
+                alert("SECURITY VIOLATION: Invalid Secret Verification Code!");
+                return;
+            }
+
+            // നിങ്ങളുടെ Render ബാക്ക്-എൻഡിലേക്ക് ഈ വിവരങ്ങൾ സുരക്ഷിതമായി അയക്കുന്നു (റിപ്പോർട്ട് സേവ് ചെയ്യാൻ)
+            fetch('https://nebula-backend-3-rdiz.onrender.com/track_intrusion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: "TERMINAL_GATE_ACCESS",
+                    details: `User: ${user} tried accessing with token: ${secret}`
+                })
+            });
+
+            // ഡബിൾ ചെക്ക് കറക്റ്റ് ആണെങ്കിൽ ടെർമിനൽ തുറക്കുന്നു
+            if (user === "admin" && pass === "nebula70") {
+                document.getElementById('gateBox').style.display = "none";
+                document.getElementById('terminalBox').style.display = "flex";
+                document.getElementById('cmdInput').focus();
+            } else {
+                alert("ACCESS DENIED: Invalid User or Passcode!");
+            }
+        }
+
+        // --- കമാൻഡ് പ്രോസസ്സിംഗ് ---
+        const cmdInput = document.getElementById('cmdInput');
+        const terminalBody = document.getElementById('terminalBody');
+        const commands = {
+            'help': 'Available Commands:\n- help: Show guidelines\n- status: Check secure core state\n- clear: Clear logs screen\n- exit: Secure log out',
+            'status': 'SECURE ENVIRONMENT ACTIVE\nVERIFICATION STATUS: LEVEL 2 VERIFIED\nINTEGRITY: 100%'
+        };
+
+        cmdInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const fullCmd = cmdInput.value.trim();
+                const cmd = fullCmd.toLowerCase();
+                if (!fullCmd) return;
+
+                const inputLine = document.createElement('div');
+                inputLine.className = 'output-line';
+                inputLine.innerHTML = `<span style="color: #ff3333;">kali@nebula:~$</span> ${fullCmd}`;
+                terminalBody.insertBefore(inputLine, cmdInput.parentElement);
+
+                const responseLine = document.createElement('div');
+                responseLine.className = 'output-line';
+
+                if (cmd === 'clear') {
+                    const lines = terminalBody.querySelectorAll('.output-line');
+                    lines.forEach(line => line.remove());
+                } else if (cmd === 'exit') {
+                    window.location.href = 'dashboard.html';
+                } else if (commands[cmd]) {
+                    responseLine.innerText = commands[cmd];
+                    terminalBody.insertBefore(responseLine, cmdInput.parentElement);
+                } else {
+                    responseLine.innerHTML = `<span style="color:#ff3333;">Command error: "${fullCmd}" is restricted or not found.</span>`;
+                    terminalBody.insertBefore(responseLine, cmdInput.parentElement);
+                }
+
+                cmdInput.value = '';
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+            }
+        });
+
+        document.getElementById('terminalBox').addEventListener('click', () => { cmdInput.focus(); });
+    </script>
+</body>
+</html>
