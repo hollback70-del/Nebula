@@ -3,89 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nebula - Admin Secure Control Panel</title>
+    <title>Nebula - Admin Control Panel</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
-        body { background-color: #050505; color: #ff0000; min-height: 100vh; padding: 30px; display: flex; flex-direction: column; align-items: center; }
+        /* അടിസ്ഥാന ക്രമീകരണങ്ങൾ ലളിതമാക്കി */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; }
         
-        .box { width: 100%; max-width: 500px; background: #000; border: 2px solid #ff0000; padding: 30px; box-shadow: 0 0 20px rgba(255,0,0,0.2); text-align: center; }
-        h2 { margin-bottom: 20px; letter-spacing: 2px; }
-        input { width: 100%; background: #111; border: 1px solid #ff0000; padding: 10px; color: #fff; margin-bottom: 15px; outline: none; }
-        button { background: transparent; border: 1px solid #ff0000; color: #ff0000; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; }
-        button:hover { background: #ff0000; color: #000; }
+        body { 
+            background-color: #0d0d0d; 
+            color: #ff3333; 
+            min-height: 100vh; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+        }
 
-        /* വെരിഫിക്കേഷൻ സ്റ്റേജുകൾ */
+        /* പ്രധാന ലോഗിൻ ബോക്സ് കൂടുതൽ ക്ലീൻ ആക്കി */
+        .box { 
+            width: 100%; 
+            max-width: 420px; 
+            background: #000; 
+            border: 1px solid #ff3333; 
+            padding: 25px; 
+            box-shadow: 0 4px 15px rgba(255, 51, 51, 0.1); 
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        h2 { font-size: 1.2rem; margin-bottom: 20px; letter-spacing: 1px; color: #ff3333; }
+        
+        input { 
+            width: 100%; 
+            background: #151515; 
+            border: 1px solid #333; 
+            padding: 12px; 
+            color: #fff; 
+            margin-bottom: 15px; 
+            outline: none;
+            border-radius: 4px;
+        }
+        input:focus { border-color: #ff3333; }
+
+        button { 
+            background: #ff3333; 
+            border: none; 
+            color: #000; 
+            padding: 12px 20px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        button:hover { background: #ff5555; }
+
         .stage { display: none; }
         .stage.active { display: block; }
 
-        /* പസിൽ സ്റ്റൈൽ */
-        .puzzle-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 150px; margin: 20px auto; }
-        .puzzle-piece { width: 45px; height: 45px; background: #222; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; font-weight: bold; }
+        /* പസിൽ ഡിസൈൻ ലളിതമാക്കി */
+        .puzzle-container { display: flex; justify-content: center; gap: 10px; margin: 20px auto; }
+        .puzzle-piece { 
+            width: 50px; 
+            height: 50px; 
+            background: #151515; 
+            border: 1px solid #ff3333; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #fff; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 4px;
+        }
 
-        /* ഹ്യൂമൻ വെരിഫിക്കേഷൻ സ്റ്റൈൽ */
-        .hint-text { font-size: 10px; color: #550000; margin-top: 5px; display: inline-block; text-decoration: none; }
-        .hint-text.visible { color: #ff0000; font-weight: bold; }
+        /* റെഡ് മഷിയിലുള്ള ടിക്കറ്റ് ലിങ്ക് */
+        .hint-text { 
+            font-size: 12px; 
+            color: #990000; 
+            margin-top: 15px; 
+            display: inline-block; 
+            text-decoration: underline; 
+            cursor: pointer;
+        }
+        .hint-text.visible { color: #ff3333; font-weight: bold; }
 
-        /* മെയിൻ പാനൽ ഡാഷ്‌ബോർഡ് */
-        .admin-dashboard { display: none; width: 100%; max-width: 1200px; background: #000; border: 2px solid #00ff33; color: #00ff33; padding: 30px; box-shadow: 0 0 30px rgba(0,255,51,0.2); }
-        .grid-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-top: 20px; }
-        .pc-list { display: flex; flex-direction: column; gap: 10px; border-right: 1px dashed #00ff33; padding-right: 15px; }
-        .pc-btn { background: rgba(0,255,51,0.05); border: 1px solid #00ff33; color: #00ff33; padding: 10px; text-align: left; cursor: pointer; }
-        .pc-btn.active, .pc-btn:hover { background: #00ff33; color: #000; }
+        /* മെയിൻ കൺട്രോൾ പാനൽ ഡിസൈൻ മാറ്റങ്ങൾ */
+        .admin-dashboard { 
+            display: none; 
+            width: 100%; 
+            max-width: 1000px; 
+            background: #000; 
+            border: 1px solid #00ff33; 
+            color: #00ff33; 
+            padding: 25px; 
+            border-radius: 6px;
+        }
         
-        .terminal-area { background: #020a02; border: 1px solid #00ff33; padding: 20px; height: 350px; display: flex; flex-direction: column; }
-        .terminal-logs { flex: 1; overflow-y: auto; font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
-        .terminal-input-row { display: flex; gap: 10px; }
-        .term-in { flex: 1; background: transparent; border: none; color: #00ff33; outline: none; margin: 0; padding: 5px; font-size: 14px; }
+        .grid-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; margin-top: 20px; }
         
-        .pass-db { border: 1px dashed #ffff00; padding: 15px; background: rgba(255,255,0,0.05); color: #ffff00; font-size: 12px; margin-top: 20px; }
+        .pc-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            max-height: 350px; 
+            overflow-y: auto; 
+            padding-right: 5px;
+        }
+        
+        .pc-btn { 
+            background: #111; 
+            border: 1px solid #222; 
+            color: #888; 
+            padding: 10px; 
+            text-align: left; 
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .pc-btn.active, .pc-btn:hover { background: rgba(0, 255, 51, 0.1); color: #00ff33; border-color: #00ff33; }
+        
+        .terminal-area { 
+            background: #050a05; 
+            border: 1px solid #113311; 
+            padding: 15px; 
+            height: 350px; 
+            display: flex; 
+            flex-direction: column;
+            border-radius: 4px;
+        }
+        .terminal-logs { flex: 1; overflow-y: auto; font-size: 13px; margin-bottom: 10px; color: #a0a0a0; }
+        .terminal-input-row { display: flex; gap: 5px; align-items: center; border-top: 1px solid #113311; padding-top: 10px; }
+        .term-in { flex: 1; background: transparent; border: none; color: #00ff33; outline: none; margin: 0; padding: 0 5px; font-size: 14px; }
+        
+        .pass-db { border: 1px dashed #333; padding: 12px; color: #888; font-size: 12px; margin-top: 20px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
     <div class="box" id="authGate">
         <div id="stage1" class="stage active">
-            <h2>[ ADMIN ACCESS ]</h2>
+            <h2>[ ADMIN LOGIN ]</h2>
             <input type="text" id="uName" placeholder="Username">
             <input type="password" id="uPass" placeholder="Password">
-            <button onclick="checkStage1()">VERIFY IDENTITY</button>
+            <button onclick="checkStage1()">CONTINUE</button>
         </div>
 
         <div id="stage2" class="stage">
-            <h2>[ STAGE 2: PUZZLE ]</h2>
-            <p style="font-size:12px; color:#aaa;">ക്രമം തെറ്റിയ പസിൽ ശരിയാക്കുക (1, 2, 3)</p>
+            <h2>[ STAGE 2: VERIFICATION ]</h2>
+            <p style="font-size:12px; color:#888;">പസിൽ ശരിയാക്കുക (1, 2, 3 എന്ന ക്രമത്തിൽ)</p>
             <div class="puzzle-container" id="puzzleBox"></div>
-            <p style="font-size:11px; color:#666; margin-top:15px;">പസിൽ കഴിഞ്ഞാൽ താഴെ ഡബിൾ ടാപ്പ് ചെയ്യുക</p>
-            <div id="clickZone" style="border:1px dotted #ff0000; padding:15px; margin-top:10px; cursor:pointer; font-size:12px;">DOUBLE TAP HERE</div>
+            <div id="clickZone" style="border: 1px dashed #ff3333; padding: 12px; margin-top: 15px; cursor: pointer; font-size: 12px; border-radius: 4px;">
+                DOUBLE TAP HERE TO NEXT STAGE
+            </div>
         </div>
 
         <div id="stage3" class="stage">
-            <h2>[ STAGE 3: HUMAN VERIFICATION ]</h2>
-            <p id="humanQuestion" style="font-size:14px; margin-bottom:15px;"></p>
-            <input type="text" id="humanAnswer" placeholder="Your Answer">
-            <button onclick="checkStage3()">ENTER SYSTEM</button>
-            <a href="#" class="hint-text" id="hintLink" onclick="revealHint(); return false;">ticket</a>
+            <h2>[ STAGE 3: HUMAN CHECK ]</h2>
+            <p id="humanQuestion" style="font-size:13px; color:#ccc; margin-bottom:15px;"></p>
+            <input type="text" id="humanAnswer" placeholder="നിങ്ങളുടെ ഉത്തരം">
+            <button onclick="checkStage3()">SUBMIT</button>
+            <div>
+                <span class="hint-text" id="hintLink" onclick="revealHint()">[ ഇവിടെ ടാപ്പ് ചെയ്യുക / TICKET ]</span>
+            </div>
         </div>
     </div>
 
     <div class="admin-dashboard" id="adminPanel">
-        <h1 style="text-align:center; color:#00ff33; font-size:22px;">[ CENTRAL IT MANAGEMENT PANEL - SIMULATOR ]</h1>
-        <p style="text-align:center; color:#888; font-size:12px;">എല്ലാ സിസ്റ്റങ്ങളും ഒരൊറ്റ മെയിൻ സെർവറിലേക്ക് സുരക്ഷിതമായി ബന്ധിപ്പിച്ചിരിക്കുന്നു</p>
+        <h2 style="color:#00ff33; margin-bottom: 5px;">[ LAB NODE MANAGER ]</h2>
+        <p style="color: #666; font-size: 12px;">എല്ലാ സിസ്റ്റങ്ങളും സെൻട്രൽ കൺട്രോളിലേക്ക് കണക്ട് ചെയ്തിരിക്കുന്നു</p>
 
         <div class="grid-layout">
             <div class="pc-list">
-                <h3 style="font-size:14px; color:#fff; margin-bottom:5px;">ACTIVE TERMINALS</h3>
                 <script>
                     for(let i=1; i<=10; i++) {
-                        document.write(`<button class="pc-btn" id="pcbtn_${i}" onclick="selectPC(${i})">> IT-LAPTOP-NODE_0${i}</button>`);
+                        document.write(`<button class="pc-btn" id="pcbtn_${i}" onclick="selectPC(${i})">■ IT-LAPTOP-0${i}</button>`);
                     }
                 </script>
             </div>
 
             <div class="terminal-area">
-                <h3 id="currentPCHead" style="font-size:14px; color:#fff; border-bottom:1px solid #00ff33; padding-bottom:5px; margin-bottom:10px;">CONNECTED TO: NODE_01</h3>
+                <div id="currentPCHead" style="font-size:13px; color:#00ff33; margin-bottom:10px; font-weight:bold;">CONNECTED: NODE_01</div>
                 <div class="terminal-logs" id="termLogs">
-                    <p style="color:#666;">> Terminal initialized. Type 'help' for safe available commands.</p>
+                    <p>> Ready. Type 'help' to see safe available instructions.</p>
                 </div>
                 <div class="terminal-input-row">
                     <span>sys@nebula:~#</span>
@@ -95,20 +196,16 @@
         </div>
 
         <div class="pass-db">
-            <b>[ MOCK REGISTERED CONFIG DATABASE ]</b><br>
-            MASTER_GATEWAY: 192.168.1.100 | LOCAL_ENC: AES-256<br>
-            NODE_01_REF: [PASS_MASKED_A] | NODE_02_REF: [PASS_MASKED_B] | LAB_ROUTER_PIN: 2026_SECURE
+            <b>DATABASE MONITOR:</b> MASTER_GATEWAY: 192.168.1.100 | PIN: 2026_SECURE | LAB_NETWORK: ACTIVE
         </div>
-        <center><button class="back-btn" style="border-color:#ff0000; color:#ff0000; max-width:200px; margin-top:20px;" onclick="window.location.reload()">LOGOUT</button></center>
+        <button style="background:#222; color:#ff3333; border:1px solid #ff3333; max-width:150px; margin-top:20px; padding:8px;" onclick="window.location.reload()">LOGOUT</button>
     </div>
 
     <script>
         let selectedPCNum = 1;
         let puzzleState = [2, 3, 1];
         let lastTap = 0;
-        let hintClickCount = 0;
 
-        // --- സ്റ്റേജ് 1: കലി / ലിനക്സ് ചെക്ക് ---
         function checkStage1() {
             const u = document.getElementById('uName').value;
             const p = document.getElementById('uPass').value;
@@ -116,10 +213,9 @@
                 document.getElementById('stage1').classList.remove('active');
                 document.getElementById('stage2').classList.add('active');
                 initPuzzle();
-            } else { alert("ACCESS DENIED: Invalid Credentials"); }
+            } else { alert("ACCESS DENIED"); }
         }
 
-        // --- സ്റ്റേജ് 2: സിംപിൾ പസിൽ ലോജിക് ---
         function initPuzzle() {
             const box = document.getElementById('puzzleBox');
             box.innerHTML = "";
@@ -139,7 +235,6 @@
             initPuzzle();
         }
 
-        // ഡബിൾ ടാപ്പ് വെരിഫിക്കേഷൻ
         document.getElementById('clickZone').addEventListener('click', function() {
             const now = new Date().getTime();
             if((now - lastTap) < 300 && (now - lastTap) > 0) {
@@ -147,35 +242,33 @@
                     document.getElementById('stage2').classList.remove('active');
                     document.getElementById('stage3').classList.add('active');
                     loadHumanQuestion();
-                } else { alert("പസിൽ ഓർഡർ (1, 2, 3) ശരിയാക്കിയ ശേഷം ഡബിൾ ടാപ്പ് ചെയ്യുക!"); }
+                } else { alert("പസിൽ ഓർഡർ (1, 2, 3) ശരിയാക്കുക!"); }
             }
             lastTap = now;
         });
 
-        // --- സ്റ്റേജ് 3: ഹ്യൂമൻ ക്വസ്റ്റ്യൻ ലോജിക് ---
         function loadHumanQuestion() {
-            document.getElementById('humanQuestion').innerText = "ചോദ്യം: മനുഷ്യർക്ക് മാത്രം അറിയാവുന്ന ആകാശത്തിന്റെ നിറം എന്ത്? (ചുവടെയുള്ള ഹിന്റിൽ ടാപ്പ് ചെയ്ത ശേഷം ഉത്തരം എഴുതുക)";
+            document.getElementById('humanQuestion').innerText = "ചോദ്യം: സാധാരണയായി പകൽ സമയത്ത് കാണുന്ന ആകാശത്തിന്റെ നിറം എന്ത്?";
         }
         function revealHint() {
             document.getElementById('hintLink').classList.add('visible');
-            alert("ഹിന്റ് ആക്റ്റിവേറ്റഡ്! ഇപ്പോൾ ഉത്തരം ബോക്സിൽ ടൈപ്പ് ചെയ്ത് സബ്മിറ്റ് ചെയ്യാം.");
+            alert("ഹിന്റ് വെരിഫൈഡ്! 'blue' അല്ലെങ്കിൽ 'നീല' എന്ന് ടൈപ്പ് ചെയ്യുക.");
         }
         function checkStage3() {
-            const ans = document.getElementById('humanAnswer').value.trim();
-            if(ans === "നീല" || ans === "blue" || ans === "Blue") {
+            const ans = document.getElementById('humanAnswer').value.trim().toLowerCase();
+            if(ans === "നീല" || ans === "blue") {
                 document.getElementById('authGate').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 selectPC(1);
-            } else { alert("VERIFICATION FAILED: Wrong Human Verification Answer"); }
+            } else { alert("വെരിഫിക്കേഷൻ പരാജയപ്പെട്ടു!"); }
         }
 
-        // --- മെയിൻ പാനൽ ടെർമിനൽ ഫങ്ഷനുകൾ ---
         function selectPC(num) {
             selectedPCNum = num;
             document.querySelectorAll('.pc-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`pcbtn_${num}`).classList.add('active');
-            document.getElementById('currentPCHead').innerText = `CONNECTED TO: IT-LAPTOP-NODE_0${num}`;
-            document.getElementById('termLogs').innerHTML = `<p style="color:#666;">> Node_0${num} interface shell ready. Type 'help' for instructions.</p>`;
+            document.getElementById('currentPCHead').innerText = `CONNECTED: IT-LAPTOP-0${num}`;
+            document.getElementById('termLogs').innerHTML = `<p>> Laptop Node_0${num} interface connection stable. Type 'help' for tools.</p>`;
         }
 
         function handleCommand(e) {
@@ -185,25 +278,24 @@
                 const logs = document.getElementById('termLogs');
                 
                 if(!cmd) return;
-                logs.innerHTML += `<p>sys@nebula:~# ${inputField.value}</p>`;
+                logs.innerHTML += `<p style="color:#fff;">sys@nebula:~# ${inputField.value}</p>`;
 
-                // നിയമപരമായ സുരക്ഷിത സിമുലേഷൻ കമാൻഡുകൾ
                 if(cmd === "help") {
-                    logs.innerHTML += `<p style="color:#00ccff;">Available Commands:<br>- status : സിസ്റ്റം അവസ്ഥ പരിശോധിക്കാൻ<br>- ping : നെറ്റ്‌വർക്ക് സ്പീഡ് നോക്കാൻ<br>- clear : വിൻഡോ ക്ലിയർ ചെയ്യാൻ<br>- sysinfo : ഹാർഡ്‌വെയർ വിവരങ്ങൾ</p>`;
+                    logs.innerHTML += `<p style="color:#00ccff;">ഉപയോഗിക്കാവുന്ന കമാൻഡുകൾ:<br>- status : കമ്പ്യൂട്ടറിന്റെ അവസ്ഥ നോക്കാൻ<br>- ping : കണക്ഷൻ പരിശോധിക്കാൻ<br>- clear : വിൻഡോ വൃത്തിയാക്കാൻ<br>- sysinfo : സിസ്റ്റം വിവരങ്ങൾ</p>`;
                 } else if(cmd === "status") {
-                    logs.innerHTML += `<p style="color:#00ff33;">NODE_0${selectedPCNum} STATUS: ONLINE / SAFE<br>CPU usage: 12% | RAM: 1.4GB / 4GB</p>`;
+                    logs.innerHTML += `<p>NODE_0${selectedPCNum} STATUS: ONLINE<br>CPU: 8% | Memory: OK</p>`;
                 } else if(cmd === "ping") {
-                    logs.innerHTML += `<p>64 bytes from central_node: icmp_seq=1 ttl=64 time=0.42 ms</p>`;
+                    logs.innerHTML += `<p style="color:#ffff00;">Reply from central_gateway: time=0.35ms</p>`;
                 } else if(cmd === "clear") {
                     logs.innerHTML = "";
                 } else if(cmd === "sysinfo") {
-                    logs.innerHTML += `<p>OS: Nebula-Linux Academic Edition v4.4<br>Device Type: School IT IT@School Laptop Client</p>`;
+                    logs.innerHTML += `<p>OS: Nebula OS v4.0<br>Hardware: Client IT Lab Workstation</p>`;
                 } else {
-                    logs.innerHTML += `<p style="color:#ff0000;">Unknown command. Type 'help' for safe standard procedures.</p>`;
+                    logs.innerHTML += `<p style="color:#ff3333;">അസാധുവായ കമാൻഡ്. 'help' എന്ന് ടൈപ്പ് ചെയ്യുക.</p>`;
                 }
 
                 inputField.value = "";
-                logs.scrollTop = logs.scrollHeight; // ഓട്ടോമാറ്റിക് താഴേക്ക് സ്ക്രോൾ ചെയ്യാൻ
+                logs.scrollTop = logs.scrollHeight;
             }
         }
     </script>
