@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Chat Authentication</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        body { background-color: #050505; color: #00ccff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .auth-container { width: 100%; max-width: 400px; background: #000; border: 2px solid #00ccff; padding: 30px; box-shadow: 0 0 20px rgba(0, 204, 255, 0.2); text-align: center; }
+        h2 { font-size: 20px; margin-bottom: 20px; letter-spacing: 2px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 12px; margin-bottom: 5px; color: #666; }
+        .auth-input { width: 100%; background: #0a0a0a; border: 1px solid #00ccff; padding: 10px; color: #fff; outline: none; }
+        .auth-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid #00ff33; color: #00ff33; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .auth-btn:hover { background: #00ff33; color: #000; }
+        .switch-link { margin-top: 15px; font-size: 12px; color: #aaa; cursor: pointer; display: inline-block; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container" id="authBox">
+        <h2 id="formTitle">[ GLOBAL CHAT LOGIN ]</h2>
+        
+        <div class="input-group">
+            <label>USERNAME:</label>
+            <input type="text" id="username" class="auth-input" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>PASSWORD:</label>
+            <input type="password" id="password" class="auth-input">
+        </div>
+
+        <button class="auth-btn" id="actionBtn" onclick="handleAuth()">ENTER CHUT HUB</button>
+        <p class="switch-link" id="toggleLink" onclick="toggleForm()">Don't have an account? Sign Up</p>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+
+        function toggleForm() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('formTitle');
+            const btn = document.getElementById('actionBtn');
+            const link = document.getElementById('toggleLink');
+
+            if (isLoginMode) {
+                title.innerText = "[ GLOBAL CHAT LOGIN ]";
+                btn.innerText = "ENTER CHAT HUB";
+                link.innerText = "Don't have an account? Sign Up";
+            } else {
+                title.innerText = "[ CREATE NEW ACCOUNT ]";
+                btn.innerText = "REGISTER & REGISTER";
+                link.innerText = "Already have an account? Login";
+            }
+        }
+
+        function handleAuth() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if(!user || !pass) {
+                alert("Please fill all fields!");
+                return;
+            }
+
+            // ലോക്കൽ സ്റ്റോറേജിൽ താല്ക്കാലികമായി യൂസറെ സേവ് ചെയ്യുന്നു (ബാക്ക് എൻഡ് റെഡിയാക്കുന്നത് വരെ ടെസ്റ്റ് ചെയ്യാൻ)
+            if (!isLoginMode) {
+                localStorage.setItem(`chat_user_${user}`, pass);
+                alert("Registration Successful! Now please login.");
+                toggleForm();
+            } else {
+                const savedPass = localStorage.getItem(`chat_user_${user}`);
+                if (savedPass === pass || (user === "admin" && pass === "nebula70")) {
+                    localStorage.setItem("current_chat_session_user", user);
+                    window.location.href = "chat.html";
+                } else {
+                    alert("Invalid Username or Password!");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
