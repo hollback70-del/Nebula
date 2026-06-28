@@ -44,12 +44,14 @@
             font-size: 14px;
         }
 
-        /* പ്രൊഫൈൽ ബട്ടൺ താഴെ സെറ്റ് ചെയ്യുന്നു */
+        /* ബട്ടണുകൾ ഒന്നിച്ച് വെക്കാനുള്ള കണ്ടെയ്നർ */
         .bottom-nav {
             width: 100%;
             display: flex;
             justify-content: center;
+            gap: 20px; /* രണ്ട് ബട്ടണുകൾ തമ്മിലുള്ള അകലം */
             padding-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .profile-link-btn {
@@ -71,6 +73,12 @@
             background: #00ff33;
             color: #000;
             box-shadow: 0 0 15px #00ff33;
+        }
+
+        /* ലോഗ് ബട്ടണിന് ചെറിയൊരു പ്രത്യേകത നൽകാൻ */
+        .logs-btn {
+            border-color: #00ff33;
+            background: rgba(0, 255, 51, 0.05);
         }
 
         .icon {
@@ -95,6 +103,11 @@
         <a href="profile.html" class="profile-link-btn">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
             Account Profile
+        </a>
+
+        <a href="view_logs.html" class="profile-link-btn logs-btn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            System Logs
         </a>
     </div>
 
