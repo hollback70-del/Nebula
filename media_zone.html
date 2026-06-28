@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Media Zone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #050505;
+            color: #00ff33;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00ff33;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 51, 0.1);
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 8px #00ff33;
+        }
+
+        /* മോഹൻലാൽ ചിത്രത്തിനുള്ള സെക്ഷൻ */
+        .image-box {
+            width: 100%;
+            border: 1px solid #005511;
+            padding: 10px;
+            background: #000;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .image-box img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border: 1px solid #00ff33;
+        }
+
+        /* നിങ്ങൾക്ക് ടൈപ്പ് ചെയ്യാനുള്ള സ്പേസ് */
+        .write-space {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .write-space h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #008822;
+        }
+
+        .write-space textarea {
+            width: 100%;
+            height: 150px;
+            background: #000;
+            border: 1px solid #00ff33;
+            color: #ffffff;
+            padding: 15px;
+            font-size: 15px;
+            outline: none;
+            resize: vertical;
+        }
+
+        .write-space textarea:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 51, 0.3);
+        }
+
+        /* കാലി ലിനക്സ് ടൂളുകളുടെ ലിസ്റ്റ് */
+        .tools-section {
+            border-top: 1px dashed #00ff33;
+            padding-top: 20px;
+        }
+
+        .tools-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            color: #00ff33;
+            text-transform: uppercase;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .tool-card {
+            background: #0d0d0d;
+            border: 1px solid #004411;
+            padding: 10px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .tool-card span {
+            color: #ffffff;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .btn-back {
+            display: block;
+            width: 100%;
+            max-width: 150px;
+            margin: 30px auto 0;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid #00ff33;
+            color: #00ff33;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .btn-back:hover {
+            background: #00ff33;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>[ NEBULA MEDIA ZONE ]</h2>
+
+        <div class="image-box">
+            <img src="https://images.indianexpress.com/2023/12/Mohanlal-Neru-1.jpg" alt="Mohanlal">
+        </div>
+
+        <div class="write-space">
+            <h3>> ENTER CUSTOM SCRIPT / TEXT:</h3>
+            <textarea placeholder="നിങ്ങൾക്ക് എഴുതാനുള്ള കാര്യങ്ങൾ ഇവിടെ ടൈപ്പ് ചെയ്യാം..."></textarea>
+        </div>
+
+        <div class="tools-section">
+            <h3>> KALI LINUX INTEGRATED TOOLS</h3>
+            <div class="tools-grid">
+                <div class="tool-card"><span>01. Nmap</span>Network Mapper & Scanner</div>
+                <div class="tool-card"><span>02. Wireshark</span>Network Packet Analyzer</div>
+                <div class="tool-card"><span>03. Metasploit</span>Penetration Testing Framework</div>
+                <div class="tool-card"><span>04. Burp Suite</span>Web Vulnerability Scanner</div>
+                <div class="tool-card"><span>05. John the Ripper</span>Password Cracking Tool</div>
+                <div class="tool-card"><span>06. Hydra</span>Fast Login Cracker</div>
+                <div class="tool-card"><span>07. Aircrack-ng</span>Wireless Security Auditor</div>
+                <div class="tool-card"><span>08. Sqlmap</span>SQL Injection Automated Tool</div>
+            </div>
+        </div>
+
+        <button class="btn-back" onclick="window.location.href='profile.html'">RETURN</button>
+    </div>
+
+</body>
+</html>
