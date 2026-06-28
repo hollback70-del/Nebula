@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Kali Linux Tools Encyclopedia</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        body { background-color: #030303; color: #00ff33; padding: 25px; min-height: 100vh; }
+        
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; background: #000; border: 2px solid #00ff33; padding: 25px; box-shadow: 0 0 30px rgba(0,255,51,0.1); border-radius: 6px; }
+        .header { text-align: center; border-bottom: 2px dashed #00ff33; padding-bottom: 15px; margin-bottom: 25px; }
+        
+        h2 { color: #fff; letter-spacing: 2px; }
+        h3 { color: #00ffff; margin: 20px 0 10px 0; border-left: 4px solid #00ffff; padding-left: 10px; font-size: 16px; }
+        
+        /* ടൂളുകൾ കാണിക്കുന്ന ഗ്രിഡ് ലേഔട്ട് */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-bottom: 40px; }
+        .tool-card { background: #050a05; border: 1px solid #113311; padding: 15px; border-radius: 4px; }
+        .tool-name { font-weight: bold; color: #ff9900; font-size: 14px; margin-bottom: 5px; }
+        .tool-desc { color: #ccc; font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
+        .cmd-box { background: #000; color: #00ff33; padding: 6px; font-size: 11px; border-left: 2px solid #00ff33; overflow-x: auto; white-space: nowrap; }
+
+        /* Nmap മലയാളം ഗൈഡ് സെക്ഷൻ */
+        .nmap-section { background: #05050a; border: 1px solid #00ffff; padding: 20px; border-radius: 4px; margin-top: 30px; }
+        .nmap-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        .nmap-table th, .nmap-table td { border: 1px solid #224455; padding: 12px; text-align: left; }
+        .nmap-table th { background: #112233; color: #00ffff; }
+        .nmap-table td { color: #ddd; }
+        .nmap-cmd { color: #ff3333; font-weight: bold; font-family: monospace; }
+        
+        .back-btn { display: block; margin: 30px auto 0 auto; background: transparent; border: 1px solid #ff3333; color: #ff3333; padding: 10px 25px; cursor: pointer; font-weight: bold; }
+        .back-btn:hover { background: #ff3333; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>[ KALI LINUX 1000+ TOOLS ENCYCLOPEDIA ]</h2>
+            <p style="font-size: 11px; color: #666; margin-top: 5px;">SYSTEM SECURITY AUDIT TOOLKIT & MALAYALAM NMAP MANUAL</p>
+        </div>
+
+        <h3>📁 CORE AUDITING TOOLS (CATEGORIES)</h3>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="tool-name">1. Nmap (Network Mapper)</div>
+                <div class="tool-desc">നെറ്റ്‌വർക്കിലെ ഹോസ്റ്റുകളും സർവീസുകളും പോർട്ടുകളും സ്കാൻ ചെയ്ത് കണ്ടെത്തുന്നു.</div>
+                <div class="cmd-box">nmap -sV [target_ip]</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-name">2. Wireshark</div>
+                <div class="tool-desc">ലൈവ് നെറ്റ്‌വർക്ക് പാക്കറ്റുകൾ ക്യാപ്‌ചർ ചെയ്യാനും അനലൈസ് ചെയ്യാനും സഹായിക്കുന്നു.</div>
+                <div class="cmd-box">wireshark</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-name">3. Burp Suite</div>
+                <div class="tool-desc">വെബ് ആപ്ലിക്കേഷനുകളിലെ സെക്യൂരിറ്റി പ്രശ്നങ്ങൾ ടെസ്റ്റ് ചെയ്യാനുള്ള പ്രോക്സി ടൂൾ.</div>
+                <div class="cmd-box">burpsuite</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-name">4. John the Ripper</div>
+                <div class="tool-desc">മറന്നുപോയ പാസ്‌വേഡുകൾ ക്രാക്ക് ചെയ്യാനും ഹാഷ് സുരക്ഷ പരിശോധിക്കാനുമുള്ള ടൂൾ.</div>
+                <div class="cmd-box">john [password_hash_file]</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-name">5. Metasploit Framework</div>
+                <div class="tool-desc">സെക്യൂരിറ്റി പിഴവുകൾ പരിശോധിക്കാനും സിസ്റ്റം സുരക്ഷ ഉറപ്പാക്കാനുമുള്ള കൂറ്റൻ ഡാറ്റാബേസ്.</div>
+                <div class="cmd-box">msfconsole</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-name">6. Hydra</div>
+                <div class="tool-desc">ലോഗിൻ പേജുകളുടെ സുരക്ഷാ കരുത്ത് പരിശോധിക്കാനുള്ള അതിവേഗ നെറ്റ്‌വർക്ക് ടൂൾ.</div>
+                <div class="cmd-box">hydra -l admin -P pass.txt [ip] ssh</div>
+            </div>
+        </div>
+
+        <div class="nmap-section">
+            <h3 style="border-color: #ff9900; color: #ff9900; margin-top: 0;">🗺️ NMAP COMMAND MANUAL (മലയാളം ഗൈഡ്)</h3>
+            <p style="font-size: 11px; color: #888;">നെറ്റ്‌വർക്ക് സെക്യൂരിറ്റി ഓഡിറ്റിംഗിനായി ഉപയോഗിക്കുന്ന Nmap കമാൻഡുകൾ താഴെ നൽകുന്നു:</p>
+            
+            <table class="nmap-table">
+                <thead>
+                    <tr>
+                        <th>Nmap കമാൻഡ്</th>
+                        <th>ഉപയോഗിക്കുന്നത് എന്തിനുവേണ്ടി? (Purpose)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="nmap-cmd">nmap [target_ip]</td>
+                        <td>ഒരു കമ്പ്യൂട്ടറിലെ അല്ലെങ്കിൽ വെബ്‌സൈറ്റിലെ ഏറ്റവും പ്രധാനപ്പെട്ട 1000 പോർട്ടുകൾ സാധാരണ രീതിയിൽ സ്കാൻ ചെയ്യാൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -v [target_ip]</td>
+                        <td>Verbose Mode: സ്കാനിംഗ് നടക്കുമ്പോൾ ബാക്ക്ഗ്രൗണ്ടിൽ എന്താണ് സംഭവിക്കുന്നത് എന്ന് ലൈവായി സ്ക്രീനിൽ കാണാൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -p 80,443 [target_ip]</td>
+                        <td>നിർദ്ദിഷ്ട പോർട്ടുകൾ മാത്രം (ഉദാഹരണത്തിന് പോർട്ട് 80, 443 മാത്രം) പ്രത്യേകം സ്കാൻ ചെയ്യാൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -p- [target_ip]</td>
+                        <td>ഒരു സിസ്റ്റത്തിലുള്ള ആകെ 65535 പോർട്ടുകളും മുഴുവനായി സ്കാൻ ചെയ്ത് പരിശോധിക്കാൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -sV [target_ip]</td>
+                        <td>Version Detection: പോർട്ടുകളിൽ റൺ ചെയ്യുന്ന സോഫ്റ്റ്‌വെയറുകൾ ഏതാണെന്നും അവയുടെ വേർഷൻ ഏതാണെന്നും കണ്ടെത്താൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -O [target_ip]</td>
+                        <td>OS Detection: ടാർഗെറ്റ് സിസ്റ്റം ഉപയോഗിക്കുന്നത് വിൻഡോസ് ആണോ ലിനക്സ് ആണോ ആൻഡ്രോയിഡ് ആണോ എന്ന് തിരിച്ചറിയാൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -sS [target_ip]</td>
+                        <td>SYN Stealth Scan: ടാർഗെറ്റ് സിസ്റ്റത്തിലെ ലോഗുകളിൽ പെട്ടെന്ന് പെടാതെ വളരെ രഹസ്യമായി പോർട്ടുകൾ സ്കാൻ ചെയ്യാൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -A [target_ip]</td>
+                        <td>Aggressive Scan: ഒരൊറ്റ കമാൻഡ് വഴി OS, വേർഷൻ, ട്രേസ്‌റൂട്ട്, സ്ക്രിപ്റ്റ് സ്കാനിംഗ് എന്നിവ ഒന്നിച്ച് പ്രവർത്തിപ്പിക്കാൻ.</td>
+                    </tr>
+                    <tr>
+                        <td class="nmap-cmd">nmap -sn [target_ip_range]</td>
+                        <td>Ping Scan: നെറ്റ്‌വർക്കിൽ നിലവിൽ എത്ര കമ്പ്യൂട്ടറുകൾ ഓൺ ആയിട്ടുണ്ടെന്ന് (Live Hosts) മാത്രം കണ്ടെത്താൻ.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='advanced_dashboard.html'">_ RETURN TO CORE v2.0</button>
+    </div>
+
+</body>
+</html>
