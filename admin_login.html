@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nebula - Admin Control Panel</title>
     <style>
-        /* അടിസ്ഥാന ക്രമീകരണങ്ങൾ ലളിതമാക്കി */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; }
         
         body { 
@@ -19,7 +18,7 @@
             justify-content: center;
         }
 
-        /* പ്രധാന ലോഗിൻ ബോക്സ് കൂടുതൽ ക്ലീൻ ആക്കി */
+        /* ലോഗിൻ ബോക്സ് */
         .box { 
             width: 100%; 
             max-width: 420px; 
@@ -58,38 +57,7 @@
         }
         button:hover { background: #ff5555; }
 
-        .stage { display: none; }
-        .stage.active { display: block; }
-
-        /* പസിൽ ഡിസൈൻ ലളിതമാക്കി */
-        .puzzle-container { display: flex; justify-content: center; gap: 10px; margin: 20px auto; }
-        .puzzle-piece { 
-            width: 50px; 
-            height: 50px; 
-            background: #151515; 
-            border: 1px solid #ff3333; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: #fff; 
-            cursor: pointer; 
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 4px;
-        }
-
-        /* റെഡ് മഷിയിലുള്ള ടിക്കറ്റ് ലിങ്ക് */
-        .hint-text { 
-            font-size: 12px; 
-            color: #990000; 
-            margin-top: 15px; 
-            display: inline-block; 
-            text-decoration: underline; 
-            cursor: pointer;
-        }
-        .hint-text.visible { color: #ff3333; font-weight: bold; }
-
-        /* മെയിൻ കൺട്രോൾ പാനൽ ഡിസൈൻ മാറ്റങ്ങൾ */
+        /* മെയിൻ കൺട്രോൾ പാനൽ ഡിസൈൻ */
         .admin-dashboard { 
             display: none; 
             width: 100%; 
@@ -143,31 +111,10 @@
 <body>
 
     <div class="box" id="authGate">
-        <div id="stage1" class="stage active">
-            <h2>[ ADMIN LOGIN ]</h2>
-            <input type="text" id="uName" placeholder="Username">
-            <input type="password" id="uPass" placeholder="Password">
-            <button onclick="checkStage1()">CONTINUE</button>
-        </div>
-
-        <div id="stage2" class="stage">
-            <h2>[ STAGE 2: VERIFICATION ]</h2>
-            <p style="font-size:12px; color:#888;">പസിൽ ശരിയാക്കുക (1, 2, 3 എന്ന ക്രമത്തിൽ)</p>
-            <div class="puzzle-container" id="puzzleBox"></div>
-            <div id="clickZone" style="border: 1px dashed #ff3333; padding: 12px; margin-top: 15px; cursor: pointer; font-size: 12px; border-radius: 4px;">
-                DOUBLE TAP HERE TO NEXT STAGE
-            </div>
-        </div>
-
-        <div id="stage3" class="stage">
-            <h2>[ STAGE 3: HUMAN CHECK ]</h2>
-            <p id="humanQuestion" style="font-size:13px; color:#ccc; margin-bottom:15px;"></p>
-            <input type="text" id="humanAnswer" placeholder="നിങ്ങളുടെ ഉത്തരം">
-            <button onclick="checkStage3()">SUBMIT</button>
-            <div>
-                <span class="hint-text" id="hintLink" onclick="revealHint()">[ ഇവിടെ ടാപ്പ് ചെയ്യുക / TICKET ]</span>
-            </div>
-        </div>
+        <h2>[ ADMIN LOGIN ]</h2>
+        <input type="text" id="uName" placeholder="Username (kali)">
+        <input type="password" id="uPass" placeholder="Password (linux)">
+        <button onclick="checkLogin()">CONTINUE</button>
     </div>
 
     <div class="admin-dashboard" id="adminPanel">
@@ -203,64 +150,19 @@
 
     <script>
         let selectedPCNum = 1;
-        let puzzleState = [2, 3, 1];
-        let lastTap = 0;
 
-        function checkStage1() {
-            const u = document.getElementById('uName').value;
-            const p = document.getElementById('uPass').value;
+        // ലോഗിൻ പരിശോധന (ലളിതമാക്കിയത്)
+        function checkLogin() {
+            const u = document.getElementById('uName').value.trim();
+            const p = document.getElementById('uPass').value.trim();
+            
             if(u === "kali" && p === "linux") {
-                document.getElementById('stage1').classList.remove('active');
-                document.getElementById('stage2').classList.add('active');
-                initPuzzle();
-            } else { alert("ACCESS DENIED"); }
-        }
-
-        function initPuzzle() {
-            const box = document.getElementById('puzzleBox');
-            box.innerHTML = "";
-            puzzleState.forEach((num, index) => {
-                const item = document.createElement('div');
-                item.className = "puzzle-piece";
-                item.innerText = num;
-                item.onclick = () => shiftPuzzle(index);
-                box.appendChild(item);
-            });
-        }
-        function shiftPuzzle(idx) {
-            let nextIdx = (idx + 1) % 3;
-            let tmp = puzzleState[idx];
-            puzzleState[idx] = puzzleState[nextIdx];
-            puzzleState[nextIdx] = tmp;
-            initPuzzle();
-        }
-
-        document.getElementById('clickZone').addEventListener('click', function() {
-            const now = new Date().getTime();
-            if((now - lastTap) < 300 && (now - lastTap) > 0) {
-                if(puzzleState[0] === 1 && puzzleState[1] === 2) {
-                    document.getElementById('stage2').classList.remove('active');
-                    document.getElementById('stage3').classList.add('active');
-                    loadHumanQuestion();
-                } else { alert("പസിൽ ഓർഡർ (1, 2, 3) ശരിയാക്കുക!"); }
-            }
-            lastTap = now;
-        });
-
-        function loadHumanQuestion() {
-            document.getElementById('humanQuestion').innerText = "ചോദ്യം: സാധാരണയായി പകൽ സമയത്ത് കാണുന്ന ആകാശത്തിന്റെ നിറം എന്ത്?";
-        }
-        function revealHint() {
-            document.getElementById('hintLink').classList.add('visible');
-            alert("ഹിന്റ് വെരിഫൈഡ്! 'blue' അല്ലെങ്കിൽ 'നീല' എന്ന് ടൈപ്പ് ചെയ്യുക.");
-        }
-        function checkStage3() {
-            const ans = document.getElementById('humanAnswer').value.trim().toLowerCase();
-            if(ans === "നീല" || ans === "blue") {
                 document.getElementById('authGate').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 selectPC(1);
-            } else { alert("വെരിഫിക്കേഷൻ പരാജയപ്പെട്ടു!"); }
+            } else { 
+                alert("ACCESS DENIED: തെറ്റായ വിവരങ്ങൾ!"); 
+            }
         }
 
         function selectPC(num) {
