@@ -150,53 +150,20 @@
     </div>
 
     <script>
-        // രഹസ്യ കീ (Encryption Key)
-        const SECRET_KEY = "nebula_cyber_key";
-
-        // ടെക്സ്റ്റിനെ ബൈനറി (01010) ആക്കാനുള്ള ഫങ്ക്ഷൻ
-        function textToBinary(text) {
-            return text.split('').map(char => {
-                return char.charCodeAt(0).toString(2).padStart(8, '0');
-            }).join(' ');
-        }
-
-        // ബൈനറിയെ തിരിച്ച് ടെക്സ്റ്റ് ആക്കാനുള്ള ഫങ്ക്ഷൻ
-        function binaryToText(binary) {
-            return binary.split(' ').map(bin => {
-                return String.fromCharCode(parseInt(bin, 2));
-            }).join('');
-        }
-
-        // ആദ്യമായി സൈറ്റ് ഓപ്പൺ ചെയ്യുമ്പോൾ ഒരു സുരക്ഷിത അഡ്മിൻ ഡാറ്റ ഉണ്ടാക്കി ബ്രൗസറിൽ വെക്കുന്നു
-        function initializeLocalDatabase() {
-            if (!localStorage.getItem('secure_vault')) {
-                const defaultUser = "admin";
-                const defaultCode = "nebula70";
-                
-                // 1. AES എൻക്രിപ്ഷൻ ചെയ്യുന്നു
-                const encrypted = CryptoJS.AES.encrypt(`${defaultUser}:${defaultCode}`, SECRET_KEY).toString();
-                // 2. ബൈനറി രൂപത്തിലേക്ക് മാറ്റുന്നു
-                const binaryData = textToBinary(encrypted);
-                
-                // ബ്രൗസർ ഡാറ്റാബേസിൽ (localStorage) സേവ് ചെയ്യുന്നു
-                localStorage.setItem('secure_vault', binaryData);
-                console.log("[SYSTEM] Secure Binary Database Initialized.");
-            }
-        }
-
-        initializeLocalDatabase();
-
+        // Render-ൽ നിന്നുള്ള നിങ്ങളുടെ ലൈവ് ബാക്ക്-എൻഡ് URL ലിങ്ക്
+        const BACKEND_URL = "https://nebula-backend-3-rdiz.onrender.com";
+        
         let loginAttempts = 0;
         const MAX_ATTEMPTS = 3;
 
-        document.getElementById('secureLoginForm').addEventListener('submit', function(e) {
+        document.getElementById('secureLoginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const usernameInput = document.getElementById('username').value.trim();
             const accessCodeInput = document.getElementById('accessCode').value.trim();
             const errorDiv = document.getElementById('errorMessage');
 
-            //Anti-SQL Injection Security
+            // Anti-SQL Injection Security Check
             const securePattern = /^[a-zA-Z0-9_]+$/;
             if (!securePattern.test(usernameInput) || !securePattern.test(accessCodeInput)) {
                 errorDiv.innerText = "MALICIOUS INPUT DETECTED! ACCESS DENIED.";
@@ -208,32 +175,44 @@
                 return;
             }
 
-            // --- ഡാറ്റാബേസിൽ നിന്നുള്ള വെരിഫിക്കേഷൻ ---
-            // 1. ബ്രൗസറിലെ ബൈനറി ഡാറ്റ എടുക്കുന്നു
-            const storedBinary = localStorage.getItem('secure_vault');
-            // 2. ബൈനറി മാറ്റി എൻക്രിപ്റ്റ് ചെയ്ത ടെക്സ്റ്റ് ആക്കുന്നു
-            const encryptedText = binaryToText(storedBinary);
-            // 3. ഡിക്രിപ്റ്റ് ചെയ്ത് യഥാർത്ഥ യൂസർനെയിമും പാസ്‌വേഡും എടുക്കുന്നു
-            const bytes = CryptoJS.AES.decrypt(encryptedText, SECRET_KEY);
-            const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-            
-            const [storedUser, storedCode] = decryptedData.split(':');
+            errorDiv.style.color = "#00ff33";
+            errorDiv.innerText = "CONNECTING TO NEBULA SERVER...";
 
-            // ഒത്തുനോക്കുന്നു
-            if (usernameInput === storedUser && accessCodeInput === storedCode) {
-                errorDiv.style.color = "#00ff33";
-                errorDiv.innerText = "ACCESS GRANTED. REDIRECTING...";
-                
-                setTimeout(function() {
-                    window.location.href = "dashboard.html";
-                }, 1500);
-            } else {
+            try {
+                // ഇവിടെ വെച്ചാണ് നമ്മൾ ലൈവ് പൈത്തൺ ബാക്ക്-എൻഡിലേക്ക് ലോഗിൻ ഡാറ്റ അയക്കുന്നത്
+                const response = await fetch(`${BACKEND_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: usernameInput,
+                        accessCode: accessCodeInput
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status === "success") {
+                    errorDiv.style.color = "#00ff33";
+                    errorDiv.innerText = "ACCESS GRANTED. REDIRECTING...";
+                    
+                    setTimeout(function() {
+                        window.location.href = "dashboard.html";
+                    }, 1500);
+                } else {
+                    throw new Error(result.message || "INVALID CREDENTIALS");
+                }
+
+            } catch (error) {
                 loginAttempts++;
                 const remaining = MAX_ATTEMPTS - loginAttempts;
+                errorDiv.style.color = "#ff3333";
+                
                 if (remaining <= 0) {
                     errorDiv.innerText = "SYSTEM LOCKED.";
                 } else {
-                    errorDiv.innerText = `INVALID CREDENTIALS. ${remaining} ATTEMPTS LEFT.`;
+                    errorDiv.innerText = `${error.message}. ${remaining} ATTEMPTS LEFT.`;
                 }
             }
         });
