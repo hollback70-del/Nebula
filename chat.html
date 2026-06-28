@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula - Global Chat Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        body { background-color: #050505; color: #00ff33; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .chat-container { width: 100%; max-width: 600px; height: 550px; background: #000; border: 2px solid #00ccff; display: flex; flex-direction: column; }
+        .chat-header { background: #0a0a0a; border-bottom: 1px solid #00ccff; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #00ccff;}
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg-box { background: rgba(0, 204, 255, 0.05); border: 1px solid #222; padding: 10px; border-radius: 5px; max-width: 80%; width: fit-content; }
+        .msg-box.me { align-self: flex-end; background: rgba(0, 255, 51, 0.05); border-color: #00ff33; color: #fff; }
+        .sender-name { font-size: 11px; color: #00ccff; margin-bottom: 3px; font-weight: bold; }
+        .chat-footer { padding: 10px; border-top: 1px solid #00ccff; display: flex; gap: 10px; background: #0a0a0a; }
+        .msg-input { flex: 1; background: #000; border: 1px solid #00ccff; padding: 10px; color: #fff; outline: none; }
+        .send-btn { background: transparent; border: 1px solid #00ff33; color: #00ff33; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        .send-btn:hover { background: #00ff33; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>NEBULA GLOBAL CHAT HUB</span>
+            <button style="color:#ff3333; background:transparent; border:1px solid #ff3333; padding:2px 8px; cursor:pointer;" onclick="window.location.href='dashboard.html'">Exit</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg-box">
+                <div class="sender-name">System</div>
+                Welcome to the global public node. All messages are logged securely.
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="msgInput" class="msg-input" placeholder="Type secure message..." autocomplete="off">
+            <button class="send-btn" onclick="sendMessage()">SEND</button>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem("current_chat_session_user") || "Anonymous";
+        const chatBody = document.getElementById('chatBody');
+        const msgInput = document.getElementById('msgInput');
+
+        function sendMessage() {
+            const text = msgInput.value.trim();
+            if(!text) return;
+
+            // സ്ക്രീനിൽ മെസ്സേജ് കാണിക്കുന്നു
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "msg-box me";
+            msgDiv.innerHTML = `<div class="sender-name" style="color:#00ff33;">${currentUser} (You)</div><div>${text}</div>`;
+            chatBody.appendChild(msgDiv);
+
+            // മോംഗോഡിബി ബാക്ക് എൻഡിലേക്ക് ചാറ്റ് ഡാറ്റ സേവ് ചെയ്യാൻ അയക്കുന്നു
+            fetch('https://nebula-backend-3-rdiz.onrender.com/track_intrusion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: "GLOBAL_CHAT_MESSAGE",
+                    details: `Sender: ${currentUser} | Message: ${text}`
+                })
+            });
+
+            msgInput.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // എന്റർ കീ പ്രസ്സ് ചെയ്യുമ്പോൾ മെസ്സേജ് പോകാൻ
+        msgInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
