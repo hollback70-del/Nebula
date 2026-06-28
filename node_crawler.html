@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Web Node Crawler</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; }
+        body { background: #020005; color: #cc00ff; padding: 20px; text-align: center; }
+        .panel { max-width: 900px; margin: 0 auto; border: 2px solid #cc00ff; background: #000; padding: 25px; box-shadow: 0 0 20px rgba(204,0,255,0.15); }
+        .crawler-log { background: #07000a; border: 1px solid #330044; height: 180px; overflow-y: auto; text-align: left; padding: 15px; font-size: 12px; color: #aaa; margin: 20px 0; }
+        .btn { background: #cc00ff; color: #fff; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h2>🖥️ DARK WEB NODE CRAWLER & IP TRACKER</h2>
+        <div class="crawler-log" id="crawlBox">
+            > Sockets armed... Awaiting node initialization.<br>
+        </div>
+        <button class="btn" onclick="startCrawl()">DEPLOY NODE CRAWLER</button>
+        <br><br>
+        <button class="btn" style="background:#ff3333;" onclick="window.location.href='advanced_dashboard.html'">_ BACK TO v2.0</button>
+    </div>
+    <script>
+        function startCrawl() {
+            setInterval(() => {
+                const box = document.getElementById('crawlBox');
+                const ip = Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255);
+                box.innerHTML += `<br><span style="color:#cc00ff;">[FOUND NODE]</span> -> IP: ${ip} | STATUS: <span style="color:#00ff33;">ENCRYPTED SYNC OK</span>`;
+                box.scrollTop = box.scrollHeight;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
